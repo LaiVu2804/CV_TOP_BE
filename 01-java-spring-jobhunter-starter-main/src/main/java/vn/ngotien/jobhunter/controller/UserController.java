@@ -2,6 +2,8 @@ package vn.ngotien.jobhunter.controller;
 
 import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import vn.ngotien.jobhunter.domain.dto.RestUserDTO;
 import vn.ngotien.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.ngotien.jobhunter.service.UserService;
 import vn.ngotien.jobhunter.util.error.IdInvalidException;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -41,9 +45,9 @@ public class UserController {
     }
     String hashPassword = this.passwordEncoder.encode(postManUser.getPassword());
     postManUser.setPassword(hashPassword);
-    User ericUser = this.userService.handleCreateUser(postManUser);
+    User laiVu = this.userService.handleCreateUser(postManUser);
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(this.userService.convertToRestCreateDTO(ericUser));
+        .body(this.userService.convertToRestCreateDTO(laiVu));
   }
 
 
@@ -89,26 +93,26 @@ public class UserController {
 //  }
 
   //Fetch all user (pagination)
-//  @GetMapping("/users")
-//  public ResponseEntity<ResultPaginationDTO> getAllUsers(
-//      @RequestParam("current") Optional<String> currentOptinal,
-//      @RequestParam("pageSize") Optional<String> pageSizeOptinal) {
-//
-//    String sCurrent = currentOptinal.isPresent() ? currentOptinal.get() : "";
-//    String sPageSize = pageSizeOptinal.isPresent() ? pageSizeOptinal.get() : "";
-//
-//    int current = Integer.parseInt(sCurrent);
-//    int pageSize = Integer.parseInt(sPageSize);
-//
-//    Pageable pageable = PageRequest.of(current - 1, pageSize);
-//
-//    return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser(spec, pageable));
-//  }
+  @GetMapping("/users")
+  public ResponseEntity<ResultPaginationDTO> getAllUsers(
+      @RequestParam("current") Optional<String> currentOptinal,
+      @RequestParam("pageSize") Optional<String> pageSizeOptinal) {
+
+    String sCurrent = currentOptinal.isPresent() ? currentOptinal.get() : "";
+    String sPageSize = pageSizeOptinal.isPresent() ? pageSizeOptinal.get() : "";
+
+    int current = Integer.parseInt(sCurrent);
+    int pageSize = Integer.parseInt(sPageSize);
+
+    Pageable pageable = PageRequest.of(current - 1, pageSize);
+
+    return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser(spec, pageable));
+  }
 
   //Dùng Specification để filter dữ liệu tìm kiếm
-  @GetMapping("/users")
-  public ResponseEntity<ResultPaginationDTO> getAllUser(
-      @Filter Specification<User> spec) {
-    return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser(spec));
-  }
+//  @GetMapping("/users")
+//  public ResponseEntity<ResultPaginationDTO> getAllUser(
+//      @Filter Specification<User> spec) {
+//    return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser(spec));
+//  }
 }

@@ -1,5 +1,7 @@
 package vn.ngotien.jobhunter.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.ngotien.jobhunter.domain.User;
@@ -13,6 +15,7 @@ import vn.ngotien.jobhunter.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -34,10 +37,6 @@ public class UserService {
   public User handleFindUserById(long id) {
     Optional<User> user = this.userRepository.findById(id);
     return user.orElse(null);
-  }
-
-  public List<User> findAllUsers() {
-    return this.userRepository.findAll();
   }
 
   public User hanldleUpdateUser(User reqUser) {
@@ -88,47 +87,47 @@ public class UserService {
     return res;
   }
 
-//  public ResultPaginationDTO fetchAllUser(Specification<User> spec, Pageable pageable) {
-//    Page<User> pageUser = this.userRepository.findAll(spec, pageable);
-//    ResultPaginationDTO rs = new ResultPaginationDTO();
-//    Meta mt = new Meta();
-//
-//    mt.setPage(pageUser.getNumber() + 1);
-//    mt.setPageSize(pageUser.getSize());
-//
-//    mt.setPages(pageUser.getTotalPages());
-//    mt.setTotal(pageUser.getTotalElements());
-//
-//    rs.setMeta(mt);
-//    rs.setResult(pageUser.getContent());
-//
-//    List<RestUserDTO> listUser = pageUser.getContent().stream().map(item -> new RestUserDTO(
-//            item.getId(),
-//            item.getName(),
-//            item.getEmail(),
-//            item.getGender(),
-//            item.getAddress(),
-//            item.getAge(),
-//            item.getUpdateAt(),
-//            item.getCreateAt()))
-//        .collect(Collectors.toList());
-//
-//    rs.setResult(listUser);
-//
-//    return rs;
-//  }
-
-  //Vừa phân trang vừa tìm kiếm
-  public ResultPaginationDTO fetchAllUser(Specification<User> pageable) {
-    List<User> pageUser = this.userRepository.findAll(pageable);
+  public ResultPaginationDTO fetchAllUser(Specification<User> spec, Pageable pageable) {
+    Page<User> pageUser = this.userRepository.findAll(spec, pageable);
     ResultPaginationDTO rs = new ResultPaginationDTO();
     Meta mt = new Meta();
 
+    mt.setPage(pageUser.getNumber() + 1);
+    mt.setPageSize(pageUser.getSize());
+
+    mt.setPages(pageUser.getTotalPages());
+    mt.setTotal(pageUser.getTotalElements());
+
     rs.setMeta(mt);
-    rs.setResult(pageUser);
+    rs.setResult(pageUser.getContent());
+
+    List<RestUserDTO> listUser = pageUser.getContent().stream().map(item -> new RestUserDTO(
+            item.getId(),
+            item.getName(),
+            item.getEmail(),
+            item.getGender(),
+            item.getAddress(),
+            item.getAge(),
+            item.getUpdateAt(),
+            item.getCreateAt()))
+        .collect(Collectors.toList());
+
+    rs.setResult(listUser);
 
     return rs;
   }
+
+  //Vừa phân trang vừa tìm kiếm
+//  public ResultPaginationDTO fetchAllUser(Specification<User> pageable, Pageable pageable1) {
+//    List<User> pageUser = this.userRepository.findAll(pageable);
+//    ResultPaginationDTO rs = new ResultPaginationDTO();
+//    Meta mt = new Meta();
+//
+//    rs.setMeta(mt);
+//    rs.setResult(pageUser);
+//
+//    return rs;
+//  }
 
 
   public ResUpdateDTO convertToRestUpdateDTO(User user) {
