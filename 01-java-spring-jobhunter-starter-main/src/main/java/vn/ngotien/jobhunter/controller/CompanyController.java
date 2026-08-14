@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.ngotien.jobhunter.domain.Company;
-import vn.ngotien.jobhunter.domain.ApiResponse;
+import vn.ngotien.jobhunter.response.ApiResponse;
 import vn.ngotien.jobhunter.response.ResultPaginationDTO;
 import vn.ngotien.jobhunter.service.CompanyService;
 

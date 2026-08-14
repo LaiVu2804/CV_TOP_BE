@@ -8,7 +8,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
-import vn.ngotien.jobhunter.domain.RestResponse;
+import vn.ngotien.jobhunter.response.RestResponse;
 import vn.ngotien.jobhunter.util.Annotation.ApiMessage;
 
 @ControllerAdvice
