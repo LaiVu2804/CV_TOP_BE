@@ -9,6 +9,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import vn.ngotien.jobhunter.domain.RestResponse;
+import vn.ngotien.jobhunter.util.Annotation.ApiMessage;
 
 @ControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {
@@ -35,7 +36,8 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             return body;
         } else {
             restResponse.setData(body);
-            restResponse.setMessage("Lại Hoàng Vũ done");
+            ApiMessage message = returnType.getMethodAnnotation(ApiMessage.class);
+            restResponse.setMessage(message != null ? message.value() : "");
         }
         return restResponse;
 

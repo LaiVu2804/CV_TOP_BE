@@ -3,6 +3,7 @@ package vn.ngotien.jobhunter.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "companies")
 public class Company {
 
@@ -39,7 +41,7 @@ public class Company {
         this.createAt = Instant.now();
     }
 
-    private Instant updateAt;
+    private Instant updatedAt;
     private String createBy;
     private String updateBy;
 

@@ -1,19 +1,17 @@
 package vn.ngotien.jobhunter.controller;
 
+import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.ngotien.jobhunter.domain.Company;
 import vn.ngotien.jobhunter.domain.ApiResponse;
-import vn.ngotien.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.ngotien.jobhunter.response.ResultPaginationDTO;
 import vn.ngotien.jobhunter.service.CompanyService;
-
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -31,27 +29,18 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(com);
     }
 
-    @GetMapping("/get/companies")
-    public ResponseEntity<ApiResponse<ResultPaginationDTO>> getAllCompanies(
-            @RequestParam("current") Optional<String> currentOptional,
-            @RequestParam("pageSize") Optional<String> pageSizeOptional) {
-        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
-        String sPageSize = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
+    @GetMapping("/companies")
+    public ResponseEntity<ResultPaginationDTO> getAllCompanies(
+            @Filter Specification<Company> spec, Pageable pageable) {
 
-        int current = Integer.parseInt(sCurrent);
-        int pageSize = Integer.parseInt(sPageSize);
-        Pageable pageable = PageRequest.of(current - 1, pageSize);
-
-        var result = new ApiResponse<>(HttpStatus.OK, "get all users success", companyService.getAllCom(pageable), null);
-
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.status(HttpStatus.OK).body(this.companyService.getAllCom(spec, pageable));
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/companies/{id}")
     public ResponseEntity<ApiResponse<Company>> getUserById(@PathVariable Long id) {
         return companyService.getComById(id).map(user -> {
 
-            var response = new ApiResponse<Company>(HttpStatus.OK, "getUserById", user, null);
+            var response = new ApiResponse<>(HttpStatus.OK, "getUserById", user, null);
 
             return ResponseEntity.ok().body(response);
 
@@ -61,17 +50,17 @@ public class CompanyController {
         });
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/companies/{id}")
     public ResponseEntity<ApiResponse<Company>> updateProduct(@PathVariable Long id, @RequestBody Company com) {
 
         Company updated = companyService.updateCom(id, com);
 
-        var result = new ApiResponse<Company>(HttpStatus.OK, "Cập nhật thành công hehe", updated, null);
+        var result = new ApiResponse<>(HttpStatus.OK, "Cập nhật thành công ", updated, null);
 
         return ResponseEntity.ok(result);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/companies/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         companyService.deleteCom(id);
         return ResponseEntity.ok().build();

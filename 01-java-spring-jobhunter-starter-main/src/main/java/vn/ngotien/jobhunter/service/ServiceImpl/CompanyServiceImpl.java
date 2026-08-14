@@ -2,14 +2,17 @@ package vn.ngotien.jobhunter.service.ServiceImpl;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.ngotien.jobhunter.domain.Company;
-import vn.ngotien.jobhunter.domain.dto.Meta;
-import vn.ngotien.jobhunter.domain.dto.ResultPaginationDTO;
+import vn.ngotien.jobhunter.response.RestCompanyDTO;
+import vn.ngotien.jobhunter.response.ResultPaginationDTO;
 import vn.ngotien.jobhunter.repository.CompanyRepository;
 import vn.ngotien.jobhunter.service.CompanyService;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -24,11 +27,13 @@ public class CompanyServiceImpl implements CompanyService {
         return companyRepository.save(com);
     }
 
-    public ResultPaginationDTO getAllCom(Pageable pageable) {
-        Page<Company> pageCompany = this.companyRepository.findAll(pageable);
-        Meta meta = new Meta();
-        meta.setPage(pageCompany.getTotalPages() -1);
-        meta.setTotal(pageCompany.getTotalElements());
+    public ResultPaginationDTO getAllCom(Specification<Company> spec, Pageable pageable) {
+
+        Page<Company> pageCompany = this.companyRepository.findAll(spec,pageable);
+
+        ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setTotal(pageable.getPageNumber());
         meta.setPages(pageCompany.getTotalPages());
         meta.setPageSize(pageCompany.getTotalPages());
 
@@ -36,6 +41,17 @@ public class CompanyServiceImpl implements CompanyService {
         rs.setMeta(meta);
         rs.setResult(pageCompany.getContent());
 
+        List<RestCompanyDTO> listCompany = pageCompany.getContent().stream().map(item -> new RestCompanyDTO(
+                        item.getId(),
+                        item.getName(),
+                        item.getDescription(),
+                        item.getLogo(),
+                        item.getAddress(),
+                        item.getCreateAt(),
+                        item.getUpdatedAt()))
+                .collect(Collectors.toList());
+
+        rs.setResult(listCompany);
         return rs;
     }
 
@@ -50,12 +66,12 @@ public class CompanyServiceImpl implements CompanyService {
             com.setName(updateCom.getName());
             com.setLogo(updateCom.getLogo());
             return companyRepository.save(com);
-        }).orElseThrow(() -> new IllegalArgumentException("không tìm thấy " + id));
+        }).orElseThrow(() -> new IllegalArgumentException("không tìm thấy id: " + id));
     }
 
     public void deleteCom(Long id) {
         if (!companyRepository.existsById(id)) {
-            throw new IllegalArgumentException("không tìm thấy tai khoan " + id); //Ném thẳng lỗi ra message
+            throw new IllegalArgumentException("không tìm thấy id: " + id); //Ném thẳng lỗi ra message
         }
         companyRepository.deleteById(id);
     }

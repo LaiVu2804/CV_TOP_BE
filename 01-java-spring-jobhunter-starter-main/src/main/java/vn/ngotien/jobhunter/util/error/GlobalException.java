@@ -32,7 +32,7 @@ public class GlobalException {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(restResponse);
   }
 
-  @ExceptionHandler(value = {NoSuchFieldException.class,})
+  @ExceptionHandler(value = {NoSuchFieldException.class})
   public ResponseEntity<RestResponse<Object>> handleNotFoundExceptionHandler(
       NoSuchFieldException ex) {
     RestResponse<Object> res = new RestResponse<Object>();
