@@ -11,7 +11,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import vn.ngotien.jobhunter.response.RestResponse;
+import vn.ngotien.jobhunter.domain.response.RestResponse;
 
 @RestControllerAdvice
 public class GlobalException {

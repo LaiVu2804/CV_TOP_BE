@@ -5,7 +5,10 @@ import org.springframework.data.domain.Pageable;
 import  org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-import vn.ngotien.jobhunter.domain.User;
+import vn.ngotien.jobhunter.unity.Company;
+import vn.ngotien.jobhunter.unity.User;
+
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
@@ -16,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
   User findByRefreshTokenAndEmail(String token, String email);
 
     Page<User> findAll(Pageable pageable);
+
+    List<User> findByCompany(Company company);
 }

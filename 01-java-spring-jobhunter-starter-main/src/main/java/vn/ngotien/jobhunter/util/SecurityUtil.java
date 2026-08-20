@@ -23,7 +23,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.stereotype.Service;
-import vn.ngotien.jobhunter.response.RestLoginDTO;
+import vn.ngotien.jobhunter.domain.response.RestLoginDTO;
 
 @Service
 public class SecurityUtil {

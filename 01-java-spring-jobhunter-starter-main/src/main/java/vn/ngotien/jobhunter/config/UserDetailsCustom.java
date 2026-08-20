@@ -20,7 +20,7 @@ public class UserDetailsCustom implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-      vn.ngotien.jobhunter.domain.User user = this.userService.handleGetUserByUserName(username);
+      vn.ngotien.jobhunter.unity.User user = this.userService.handleGetUserByUserName(username);
       if(user == null) {
         throw new UsernameNotFoundException("username/password không hợp lệ !");
       }

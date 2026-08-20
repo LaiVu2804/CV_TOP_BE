@@ -3,9 +3,9 @@ package vn.ngotien.jobhunter.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.ngotien.jobhunter.domain.Company;
+import vn.ngotien.jobhunter.unity.Company;
 
-import vn.ngotien.jobhunter.response.ResultPaginationDTO;
+import vn.ngotien.jobhunter.domain.response.ResultPaginationDTO;
 
 import java.util.Optional;
 
@@ -21,4 +21,7 @@ public interface CompanyService {
 
     //chi dung optional cho doc du lieu
     Optional<Company> getComById(Long id);
+
+    //Tim du lieu cho company
+//    Optional<Company> findById(Long id);
 }

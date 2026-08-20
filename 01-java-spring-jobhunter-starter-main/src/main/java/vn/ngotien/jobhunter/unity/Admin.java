@@ -1,4 +1,4 @@
-package vn.ngotien.jobhunter.domain;
+package vn.ngotien.jobhunter.unity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

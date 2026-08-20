@@ -1,4 +1,4 @@
-package vn.ngotien.jobhunter.domain;
+package vn.ngotien.jobhunter.unity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -18,7 +18,12 @@ import vn.ngotien.jobhunter.util.constant.Gender;
 
 public class User {
 
-  @Id
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+
+    @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 

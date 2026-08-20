@@ -4,9 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import vn.ngotien.jobhunter.domain.Company;
-import vn.ngotien.jobhunter.response.RestCompanyDTO;
-import vn.ngotien.jobhunter.response.ResultPaginationDTO;
+import vn.ngotien.jobhunter.unity.Company;
+import vn.ngotien.jobhunter.domain.response.RestCompanyDTO;
+import vn.ngotien.jobhunter.domain.response.ResultPaginationDTO;
 import vn.ngotien.jobhunter.repository.CompanyRepository;
 import vn.ngotien.jobhunter.service.CompanyService;
 

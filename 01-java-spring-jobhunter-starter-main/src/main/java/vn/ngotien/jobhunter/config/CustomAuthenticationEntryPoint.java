@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import vn.ngotien.jobhunter.response.RestResponse;
+import vn.ngotien.jobhunter.domain.response.RestResponse;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {

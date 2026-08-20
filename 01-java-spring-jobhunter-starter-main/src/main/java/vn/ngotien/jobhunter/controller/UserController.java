@@ -8,11 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import vn.ngotien.jobhunter.domain.User;
-import vn.ngotien.jobhunter.response.ResUpdateDTO;
-import vn.ngotien.jobhunter.response.RestCreateUserDTO;
-import vn.ngotien.jobhunter.response.RestUserDTO;
-import vn.ngotien.jobhunter.response.ResultPaginationDTO;
+import vn.ngotien.jobhunter.unity.User;
+import vn.ngotien.jobhunter.domain.response.ResUpdateDTO;
+import vn.ngotien.jobhunter.domain.response.RestCreateUserDTO;
+import vn.ngotien.jobhunter.domain.response.ResultPaginationDTO;
 import vn.ngotien.jobhunter.service.UserService;
 import vn.ngotien.jobhunter.util.Annotation.ApiMessage;
 import vn.ngotien.jobhunter.util.error.IdInvalidException;
@@ -25,8 +24,6 @@ public class UserController {
 
     private final PasswordEncoder passwordEncoder;
 
-    private Specification<User> spec;
-
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
@@ -38,7 +35,7 @@ public class UserController {
         boolean isEmailExist = this.userService.isEmailExist(postManUser.getEmail());
         if (isEmailExist) {
             throw new IdInvalidException(
-                    "Email" + postManUser.getEmail() + " đã tồn tại, vui lòng nhập email khác !"
+                    "Email: " + postManUser.getEmail() + " đã tồn tại, vui lòng nhập email khác !"
             );
         }
         String hashPassword = this.passwordEncoder.encode(postManUser.getPassword());
@@ -60,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<RestUserDTO> getUserById(@PathVariable("id") long id)
+    public ResponseEntity<RestCreateUserDTO> getUserById(@PathVariable("id") long id)
             throws IdInvalidException {
         User fetcheUser = this.userService.fetchUserById(id);
         if (fetcheUser == null) {

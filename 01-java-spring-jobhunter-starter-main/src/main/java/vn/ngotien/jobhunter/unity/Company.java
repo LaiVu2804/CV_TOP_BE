@@ -1,6 +1,7 @@
-package vn.ngotien.jobhunter.domain;
+package vn.ngotien.jobhunter.unity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,6 +19,10 @@ import java.time.Instant;
 @AllArgsConstructor
 @Table(name = "companies")
 public class Company {
+
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<User> users;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +41,7 @@ public class Company {
     private String logo;
 
     private Instant createAt;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     @PrePersist
     private void handleBeforeCreate() {
@@ -44,5 +51,4 @@ public class Company {
     private Instant updatedAt;
     private String createBy;
     private String updateBy;
-
 }

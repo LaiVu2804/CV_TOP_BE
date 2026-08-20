@@ -1,4 +1,4 @@
-package vn.ngotien.jobhunter.request;
+package vn.ngotien.jobhunter.domain.request;
 
 import jakarta.validation.constraints.NotBlank;
 
