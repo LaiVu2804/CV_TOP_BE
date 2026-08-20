@@ -24,6 +24,10 @@ public class Company {
     @JsonIgnore
     List<User> users;
 
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<Job> jobs;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
