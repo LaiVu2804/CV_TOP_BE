@@ -1,4 +1,4 @@
-package vn.ngotien.jobhunter.domain.response;
+package vn.ngotien.jobhunter.domain.response.user;
 
 import java.time.Instant;
 
@@ -10,14 +10,15 @@ import vn.ngotien.jobhunter.util.constant.Gender;
 
 @Getter
 @Setter
-public class ResUpdateDTO {
-  private long id;
-  private String name;
-  private Gender gender;
-  private String address;
-  private int age;
-  private Instant updatedAt;
-    private ResUpdateDTO.Company_User company;
+public class RestCreateUserDTO {
+    private long id;
+    private String name;
+    private String email;
+    private Gender gender;
+    private String address;
+    private int age;
+    private Instant createdAt;
+    private Company_User company;
 
     @Getter
     @Setter
@@ -27,5 +28,4 @@ public class ResUpdateDTO {
         private long id;
         private String name;
     }
-
 }

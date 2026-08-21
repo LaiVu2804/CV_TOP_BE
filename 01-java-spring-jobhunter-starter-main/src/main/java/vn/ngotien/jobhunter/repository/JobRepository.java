@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import vn.ngotien.jobhunter.unity.Job;
 
 public interface JobRepository extends JpaRepository<Job, Long>, JpaSpecificationExecutor<Job> {
-    Page<Job> findAll(Pageable pageable);
 
     Page<Job> findAll(Specification<Job> spec, Pageable page);
 }

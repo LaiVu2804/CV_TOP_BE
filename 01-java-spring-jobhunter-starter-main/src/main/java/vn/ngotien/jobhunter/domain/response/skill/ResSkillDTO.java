@@ -1,4 +1,5 @@
-package vn.ngotien.jobhunter.domain.response;
+package vn.ngotien.jobhunter.domain.response.skill;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,16 +8,14 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-@Setter
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestCompanyDTO {
+public class ResSkillDTO {
+
     private long id;
     private String name;
-    private String description;
-    private String logo;
-    private String address;
-    private Instant createdAt;
-    private Instant updatedAt;
+    private Instant createAt;
+    private Instant updateAt;
 }

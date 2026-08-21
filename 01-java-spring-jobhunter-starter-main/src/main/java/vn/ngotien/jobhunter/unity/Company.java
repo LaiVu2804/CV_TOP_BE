@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.ngotien.jobhunter.util.SecurityUtil;
 
 import java.time.Instant;
 import java.util.List;
@@ -45,14 +46,26 @@ public class Company {
     private String logo;
 
     private Instant createAt;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
-    @PrePersist
-    private void handleBeforeCreate() {
-        this.createAt = Instant.now();
-    }
-
     private Instant updatedAt;
     private String createBy;
     private String updateBy;
+
+    @PrePersist
+    private void handleBeforeCreate() {
+        this.createBy =
+                SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
+                        .getCurrentUserLogin()
+                        .get() : "";
+
+        this.createAt = Instant.now();
+    }
+
+    @PreUpdate
+    private void handleBeforeUpdateAt() {
+        this.updateBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
+                .getCurrentUserLogin()
+                .get() : "";
+
+        this.updatedAt = Instant.now();
+    }
 }

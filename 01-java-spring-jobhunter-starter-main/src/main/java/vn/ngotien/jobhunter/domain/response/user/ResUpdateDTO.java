@@ -1,26 +1,23 @@
-package vn.ngotien.jobhunter.domain.response;
+package vn.ngotien.jobhunter.domain.response.user;
 
 import java.time.Instant;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.ngotien.jobhunter.util.constant.Gender;
 
-@Setter
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class RestUserDTO {
-  private long id;
-  private String name;
-  private String email;
-  private Gender gender;
-  private String address;
-  private int age;
-  private Instant createdAt;
-  private Instant updatedAt;
-    private RestCreateUserDTO.Company_User company;
+@Setter
+public class ResUpdateDTO {
+    private long id;
+    private String name;
+    private Gender gender;
+    private String address;
+    private int age;
+    private Instant updatedAt;
+    private ResUpdateDTO.Company_User company;
 
     @Getter
     @Setter
@@ -30,4 +27,5 @@ public class RestUserDTO {
         private long id;
         private String name;
     }
+
 }

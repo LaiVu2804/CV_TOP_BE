@@ -72,7 +72,4 @@ public class User {
         this.updateAt = Instant.now();
     }
 
-//    public void setPassword(String hashPassword) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-//    }
 }

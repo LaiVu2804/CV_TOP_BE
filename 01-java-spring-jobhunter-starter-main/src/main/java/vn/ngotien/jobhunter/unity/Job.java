@@ -1,5 +1,6 @@
 package vn.ngotien.jobhunter.unity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -32,7 +33,6 @@ public class Job {
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skill> skills;
 
-
     @NotBlank(message = "name không được để trống")
     private String name;
 
@@ -46,14 +46,18 @@ public class Job {
     @Column(columnDefinition = "LONGTEXT")
     private String description;
 
+    @Column(columnDefinition = "MEDIUMTEXT")
+    private String experience;
+
     private Date startDate;
     private Date endDate;
     private Boolean isActive;
-
     private Instant createAt;
     private Instant updateAt;
     private String createBy;
     private String updateBy;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
 
     @PrePersist
     private void handleBeforeCreate() {

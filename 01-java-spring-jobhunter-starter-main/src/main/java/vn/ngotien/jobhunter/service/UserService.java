@@ -9,9 +9,9 @@ import vn.ngotien.jobhunter.unity.Company;
 import vn.ngotien.jobhunter.unity.User;
 import vn.ngotien.jobhunter.repository.CompanyRepository;
 import vn.ngotien.jobhunter.repository.UserRepository;
-import vn.ngotien.jobhunter.domain.response.ResUpdateDTO;
-import vn.ngotien.jobhunter.domain.response.RestCreateUserDTO;
-import vn.ngotien.jobhunter.domain.response.RestUserDTO;
+import vn.ngotien.jobhunter.domain.response.user.ResUpdateDTO;
+import vn.ngotien.jobhunter.domain.response.user.RestCreateUserDTO;
+import vn.ngotien.jobhunter.domain.response.user.RestUserDTO;
 import vn.ngotien.jobhunter.domain.response.ResultPaginationDTO;
 
 import java.util.List;
@@ -50,10 +50,6 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
-    public User handleFindUserById(long id) {
-        Optional<User> user = this.userRepository.findById(id);
-        return user.orElse(null);
-    }
 
     public User hanldleUpdateUser(User reqUser) {
         User currentUser = this.fetchUserById(reqUser.getId());

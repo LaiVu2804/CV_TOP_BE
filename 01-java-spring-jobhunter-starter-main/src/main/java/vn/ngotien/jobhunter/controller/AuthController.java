@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.ngotien.jobhunter.unity.User;
 import vn.ngotien.jobhunter.domain.request.ReqLoginDTO;
-import vn.ngotien.jobhunter.domain.response.RestLoginDTO;
+import vn.ngotien.jobhunter.domain.response.user.RestLoginDTO;
 import vn.ngotien.jobhunter.service.UserService;
 import vn.ngotien.jobhunter.util.SecurityUtil;
 import vn.ngotien.jobhunter.util.error.IdInvalidException;

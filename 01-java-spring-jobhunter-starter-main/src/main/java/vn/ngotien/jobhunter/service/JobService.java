@@ -8,14 +8,14 @@ import vn.ngotien.jobhunter.unity.Job;
 
 @Service
 public interface JobService {
-//    ResultPaginationDTO getAllJob(Specification<Job> spec, Pageable pageable);
+    ResultPaginationDTO fetchAllJob(Specification<Job> spec, Pageable pageable);
 
     Job createJob(Job job);
 
 //    Job updateJob(Long id, Job job);
 
 //    void deleteJob(Long id);
-
-    //chi dung optional cho doc du lieu
-//    Optional<Company> getComById(Long id);
+//
+//    chi dung optional cho doc du lieu
+//    Optional<Job> getComById(Long id);
 }
