@@ -9,7 +9,5 @@ import vn.ngotien.jobhunter.unity.Company;
 
 public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
 
-    Page<Company> findAll(Pageable pageable);
-
     Page<Company> findAll(Specification<Company> spec, Pageable page);
 }

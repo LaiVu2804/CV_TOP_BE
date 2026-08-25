@@ -75,7 +75,7 @@ public class SecurityConfiguration {
                         authz ->
                                 // prettier-ignore
                                 authz
-                                        .requestMatchers("/").permitAll()
+                                        .requestMatchers("/","/api/v1/auth/login").permitAll()
                                         .anyRequest().permitAll())
 //        .exceptionHandling(
 //            exceptions -> exceptions

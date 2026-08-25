@@ -40,9 +40,9 @@ public class UserController {
         }
         String hashPassword = this.passwordEncoder.encode(postManUser.getPassword());
         postManUser.setPassword(hashPassword);
-        User laiVu = this.userService.handleCreateUser(postManUser);
+        User user = this.userService.handleCreateUser(postManUser);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(this.userService.convertToRestCreateDTO(laiVu));
+                .body(this.userService.convertToRestCreateDTO(user));
     }
 
 

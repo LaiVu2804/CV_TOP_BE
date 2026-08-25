@@ -29,8 +29,11 @@ public class Job {
     @JoinColumn(name = "company_id")
     private Company company;
 
-    @ManyToMany(fetch = FetchType.LAZY) @JsonIgnore
-    @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    @ManyToMany(fetch = FetchType.LAZY)
+//    @JsonIgnore
+    @JoinTable(name = "job_skill",
+            joinColumns = @JoinColumn(name = "job_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skill> skills;
 
     @NotBlank(message = "name không được để trống")

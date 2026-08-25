@@ -7,12 +7,13 @@ import lombok.Setter;
 import vn.ngotien.jobhunter.util.constant.Level;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestJobDTO {
+public class ResFetchJobDTO {
     private long id;
     private String name;
     private Integer quantity;
@@ -21,9 +22,13 @@ public class RestJobDTO {
     private String description;
     private Double salary;
     private String experience;
+
     private Date startDate;
     private Date endDate;
+
     private Boolean isActive;
-    private TotalResponse.Job_Company company;
-    private TotalResponse.Job_Skill skill;
+
+    private List<TotalResponse.JobSkillsDTO> skills;
+
+    private TotalResponse.JobCompanyDTO company;
 }
