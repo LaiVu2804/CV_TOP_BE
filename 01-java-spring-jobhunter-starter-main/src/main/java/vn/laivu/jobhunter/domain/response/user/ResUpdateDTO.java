@@ -2,11 +2,10 @@ package vn.laivu.jobhunter.domain.response.user;
 
 import java.time.Instant;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.laivu.jobhunter.util.constant.Gender;
+import vn.laivu.jobhunter.domain.response.job.TotalResponse;
+import vn.laivu.jobhunter.unity.constant.Gender;
 
 @Getter
 @Setter
@@ -17,15 +16,7 @@ public class ResUpdateDTO {
     private String address;
     private int age;
     private Instant updatedAt;
-    private ResUpdateDTO.Company_User company;
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class Company_User {
-        private long id;
-        private String name;
-    }
+    private String updatedBy;
+    private TotalResponse.CompanyUser company;
 
 }

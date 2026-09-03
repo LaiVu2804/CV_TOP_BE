@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.laivu.jobhunter.util.constant.Gender;
+import vn.laivu.jobhunter.unity.constant.Gender;
 
 @Setter
 @Getter

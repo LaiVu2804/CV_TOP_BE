@@ -32,8 +32,8 @@ public class SkillServiceImpl implements SkillService {
             ResSkillDTO res = new ResSkillDTO();
             res.setId(skill.getId());
             res.setName(skill.getName());
-            res.setCreateAt(skill.getCreateAt());
-            res.setUpdateAt(skill.getUpdateAt());
+            res.setCreateAt(skill.getCreatedAt());
+            res.setUpdateAt(skill.getUpdatedAt());
             return res;
         }).collect(Collectors.toList());
     }

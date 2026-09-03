@@ -47,7 +47,7 @@ public class CompanyServiceImpl implements CompanyService {
                         item.getDescription(),
                         item.getLogo(),
                         item.getAddress(),
-                        item.getCreateAt(),
+                        item.getCreatedAt(),
                         item.getUpdatedAt()))
                 .collect(Collectors.toList());
 

@@ -45,8 +45,12 @@ public class SecurityUtil {
   @Value("${hoidanit.jwt.base64-secret}")
   private String jwtKey;
 
-  public String createAccessToken(String email,
-      RestLoginDTO.UserLogin dto) { //thời gian tạo ra token
+  public String createAccessToken(String email, RestLoginDTO dto) { //thời gian tạo ra token
+
+      RestLoginDTO.UserInsideToken userInsideToken = new RestLoginDTO.UserInsideToken();
+      userInsideToken.setId(dto.getUser().getId());
+      userInsideToken.setEmail(dto.getUser().getEmail());
+      userInsideToken.setName(dto.getUser().getName());
 
     Instant now = Instant.now();
     Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
@@ -57,14 +61,13 @@ public class SecurityUtil {
     listAuthority.add("ROLE_USER_CREATE");
     listAuthority.add("ROLE_USER_UPDATE");
 
-    // @formatter:off ( tạo ra phần body )
-    JwtClaimsSet claims = JwtClaimsSet.builder()
-        .issuedAt(now)
-        .expiresAt(validity)
-        .subject(email) //trả ra email người dùng
-        .claim("permission", listAuthority)
-        .claim("user", dto)
-        .build();
+      JwtClaimsSet claims = JwtClaimsSet.builder()
+              .issuedAt(now)
+              .expiresAt(validity)
+              .subject(email)
+              .claim("user", userInsideToken)
+              .claim("permission", listAuthority)
+              .build();
 
     //Tạo ra phần hearder
     JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();

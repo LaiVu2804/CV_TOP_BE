@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import vn.laivu.jobhunter.unity.Company;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.domain.response.user.ResUpdateDTO;
 import vn.laivu.jobhunter.domain.response.user.RestCreateUserDTO;
@@ -21,7 +22,6 @@ import vn.laivu.jobhunter.util.error.IdInvalidException;
 public class UserController {
 
     private final UserService userService;
-
     private final PasswordEncoder passwordEncoder;
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder) {
@@ -44,7 +44,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(this.userService.convertToRestCreateDTO(user));
     }
-
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
@@ -69,13 +68,13 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     @ApiMessage("Update user success !")
-    public ResponseEntity<ResUpdateDTO> updateUser(@RequestBody User user) throws IdInvalidException {
-        User ericUser = this.userService.hanldleUpdateUser(user);
-        if (ericUser == null) {
+    public ResponseEntity<ResUpdateDTO> updateUser(@Valid @RequestBody ResUpdateDTO user) throws IdInvalidException {
+        ResUpdateDTO curUser = this.userService.handleUpdateUser(user);
+        if (curUser == null) {
             throw new IdInvalidException("user với id = " + user.getId() + " không tồn tại ");
         }
 
-        return ResponseEntity.ok(this.userService.convertToRestUpdateDTO(ericUser));
+        return ResponseEntity.status(HttpStatus.OK).body(this.userService.handleUpdateUser(user));
     }
 
     //fetch all users (lấy tất cả người dùng : Specification ( user not company)
@@ -86,21 +85,4 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser(spec, pageable));
     }
-
-    //Fetch all user (pagination)
-//  @GetMapping("/users")
-//  public ResponseEntity<ResultPaginationDTO> getAllUsers(
-//      @RequestParam("current") Optional<String> currentOptinal,
-//      @RequestParam("pageSize") Optional<String> pageSizeOptinal) {
-//
-//    String sCurrent = currentOptinal.isPresent() ? currentOptinal.get() : "";
-//    String sPageSize = pageSizeOptinal.isPresent() ? pageSizeOptinal.get() : "";
-//
-//    int current = Integer.parseInt(sCurrent);
-//    int pageSize = Integer.parseInt(sPageSize);
-//
-//    Pageable pageable = PageRequest.of(current - 1, pageSize);
-//
-//    return ResponseEntity.status(HttpStatus.OK).body(this.userService.fetchAllUser(spec, pageable));
-//  }
 }

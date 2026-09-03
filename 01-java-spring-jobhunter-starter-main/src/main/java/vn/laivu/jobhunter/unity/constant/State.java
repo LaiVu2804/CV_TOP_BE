@@ -1,4 +1,4 @@
-package vn.laivu.jobhunter.util.constant;
+package vn.laivu.jobhunter.unity.constant;
 
 public enum State {
     PENDING,

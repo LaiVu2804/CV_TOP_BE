@@ -3,9 +3,8 @@ package vn.laivu.jobhunter.domain.response.job;
 
 import lombok.Getter;
 import lombok.Setter;
-import vn.laivu.jobhunter.util.constant.Level;
+import vn.laivu.jobhunter.unity.constant.Level;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -25,5 +24,4 @@ public class ResCreateJobDTO {
     private List<TotalResponse.JobSkillsDTO> skills;
     private TotalResponse.JobCompanyDTO company;
     private boolean isActive;
-    private Instant createdAt;
 }

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.laivu.jobhunter.util.SecurityUtil;
-import vn.laivu.jobhunter.util.constant.Level;
+import vn.laivu.jobhunter.unity.constant.Level;
 
 import java.time.Instant;
 import java.util.Date;
@@ -58,29 +58,29 @@ public class Job {
     private Date startDate;
     private Date endDate;
     private Boolean isActive;
-    private Instant createAt;
-    private Instant updateAt;
-    private String createBy;
-    private String updateBy;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String createdBy;
+    private String updatedBy;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
 
     @PrePersist
     private void handleBeforeCreate() {
-        this.createBy =
+        this.createdBy =
                 SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
                         .getCurrentUserLogin()
                         .get() : "";
 
-        this.createAt = Instant.now();
+        this.createdAt = Instant.now();
     }
 
     @PreUpdate
     private void handleBeforeUpdateAt() {
-        this.updateBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
                 .getCurrentUserLogin()
                 .get() : "";
 
-        this.updateAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 }

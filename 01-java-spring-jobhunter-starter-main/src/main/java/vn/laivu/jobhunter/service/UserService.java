@@ -3,8 +3,8 @@ package vn.laivu.jobhunter.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import vn.laivu.jobhunter.domain.response.job.TotalResponse;
 import vn.laivu.jobhunter.unity.Company;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.repository.CompanyRepository;
@@ -22,12 +22,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
     private final CompanyRepository companyRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, CompanyRepository companyRepository) {
+    public UserService(UserRepository userRepository, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.companyRepository = companyRepository;
     }
 
@@ -36,7 +35,6 @@ public class UserService {
             Optional<Company> companyOptional = this.companyRepository.findById(user.getCompany().getId());
             user.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -50,33 +48,53 @@ public class UserService {
         this.userRepository.deleteById(id);
     }
 
+    public ResUpdateDTO handleUpdateUser(ResUpdateDTO user) {
 
-    public User hanldleUpdateUser(User reqUser) {
-        User currentUser = this.fetchUserById(reqUser.getId());
-        if (currentUser == null) {
-            currentUser.setName(reqUser.getName());
-            currentUser.setGender(reqUser.getGender());
-            currentUser.setAge(reqUser.getAge());
-            currentUser.setAddress(reqUser.getAddress());
+        User currentUser = this.userRepository.findById(user.getId()).orElseThrow(() ->
+                new RuntimeException("User không tồn tại với id = " + user.getId()));
 
-            //Check company
-            if (reqUser.getCompany() != null) {
-                Optional<Company> companyOptional = this.companyRepository.findById(reqUser.getCompany().getId());
-                reqUser.setCompany(companyOptional.isPresent() ? companyOptional.get() : null);
+        // Update only the modifiable fields
+        currentUser.setName(user.getName());
+        currentUser.setAddress(user.getAddress());
+        currentUser.setAge(user.getAge());
+        currentUser.setUpdatedAt(user.getUpdatedAt());
+        currentUser.setUpdatedBy(user.getUpdatedBy());
+
+        // check company
+        if (user.getCompany() != null) {
+            Optional<Company> opCompany = this.companyRepository.findById(user.getCompany().getId());
+            if (opCompany.isPresent()) {
+                currentUser.setCompany(opCompany.get());
             }
-
-            //Update
-            currentUser = this.userRepository.save(currentUser);
         }
-        return currentUser;
-    }
 
-    public User handleGetUserByUserName(String userName) {
-        return this.userRepository.findByEmail(userName);
-    }
+        currentUser = this.userRepository.save(currentUser);
 
-    public boolean isEmailExist(String email) {
-        return this.userRepository.existsByEmail(email);
+        // convert response
+        ResUpdateDTO dto = new ResUpdateDTO();
+
+        dto.setId(user.getId());
+        dto.setName(currentUser.getName());
+        dto.setAddress(currentUser.getAddress());
+        dto.setAge(currentUser.getAge());
+        dto.setGender(currentUser.getGender());
+        dto.setUpdatedAt(currentUser.getUpdatedAt());
+        dto.setUpdatedBy(currentUser.getUpdatedBy());
+
+
+        TotalResponse.CompanyUser companyResponse = Optional.ofNullable(currentUser.getCompany())
+                .map(c -> {
+                    TotalResponse.CompanyUser cDto = new TotalResponse.CompanyUser();
+                    cDto.setId(c.getId());
+                    cDto.setName(c.getName());
+                    return cDto;
+                })
+                .orElse(null); // Nếu company null thì trả về null
+
+        dto.setCompany(companyResponse);
+
+        return dto;
+
     }
 
     public RestCreateUserDTO convertToRestCreateDTO(User user) {
@@ -88,7 +106,7 @@ public class UserService {
         res.setEmail(user.getEmail());
         res.setAge(user.getAge());
         res.setGender(user.getGender());
-        res.setCreatedAt(user.getCreateAt());
+        res.setCreatedAt(user.getCreatedAt());
         res.setAddress(user.getAddress());
 
         if (user.getCompany() != null) {
@@ -100,6 +118,14 @@ public class UserService {
         return res;
     }
 
+    public User handleGetUserByUserName(String userName) {
+        return this.userRepository.findByEmail(userName);
+    }
+
+    public boolean isEmailExist(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
     public RestCreateUserDTO convertToRestDTO(User user) {
         RestCreateUserDTO res = new RestCreateUserDTO();
         RestCreateUserDTO.Company_User company = new RestCreateUserDTO.Company_User();
@@ -109,7 +135,7 @@ public class UserService {
         res.setEmail(user.getEmail());
         res.setAge(user.getAge());
         res.setGender(user.getGender());
-        res.setCreatedAt(user.getCreateAt());
+        res.setCreatedAt(user.getCreatedAt());
         res.setAddress(user.getAddress());
 
         if (user.getCompany() != null) {
@@ -142,8 +168,8 @@ public class UserService {
                         item.getGender(),
                         item.getAddress(),
                         item.getAge(),
-                        item.getUpdateAt(),
-                        item.getCreateAt(),
+                        item.getUpdatedAt(),
+                        item.getCreatedAt(),
                         new RestCreateUserDTO.Company_User(
                                 item.getCompany() != null ? item.getCompany().getId() : 0,
                                 item.getCompany() != null ? item.getCompany().getName() : null)))
@@ -152,28 +178,6 @@ public class UserService {
         rs.setResult(listUser);
 
         return rs;
-    }
-
-
-    public ResUpdateDTO convertToRestUpdateDTO(User user) {
-        ResUpdateDTO res = new ResUpdateDTO();
-        ResUpdateDTO.Company_User company = new ResUpdateDTO.Company_User();
-
-        res.setId(user.getId());
-        res.setName(user.getName());
-        res.setAge(user.getAge());
-        res.setAddress(user.getAddress());
-        res.setGender(user.getGender());
-        res.setUpdatedAt(user.getUpdateAt());
-
-        //Check company
-        if (user.getCompany() != null) {
-            company.setId(user.getCompany().getId());
-            company.setName(user.getCompany().getName());
-            res.setCompany(company);
-        }
-
-        return res;
     }
 
 

@@ -12,7 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import vn.laivu.jobhunter.util.SecurityUtil;
-import vn.laivu.jobhunter.util.constant.Gender;
+import vn.laivu.jobhunter.unity.constant.Gender;
 
 @Entity
 @Table(name = "users")
@@ -52,30 +52,30 @@ public class User {
     @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
 
-    private Instant createAt;
-    private Instant updateAt;
-    private String createBy;
-    private String updateBy;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String createdBy;
+    private String updatedBy;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
 
     @PrePersist
     private void handleBeforeCreate() {
-        this.createBy =
+        this.createdBy =
                 SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
                         .getCurrentUserLogin()
                         .get() : "";
 
-        this.createAt = Instant.now();
+        this.createdAt = Instant.now();
     }
 
     @PreUpdate
     private void handleBeforeUpdateAt() {
-        this.updateBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
                 .getCurrentUserLogin()
                 .get() : "";
 
-        this.updateAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 
 }

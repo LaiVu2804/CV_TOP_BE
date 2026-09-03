@@ -6,8 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
+import vn.laivu.jobhunter.unity.constant.ResumeStateEnum;
 import vn.laivu.jobhunter.util.SecurityUtil;
-import vn.laivu.jobhunter.util.constant.State;
+import vn.laivu.jobhunter.unity.constant.State;
 import java.time.Instant;
 
 @Entity
@@ -26,7 +27,7 @@ public class Resume {
     private String url;
 
     @Enumerated(EnumType.STRING)
-    private State status;
+    private ResumeStateEnum status;
 
     private Instant createdAt;
     private Instant updatedAt;

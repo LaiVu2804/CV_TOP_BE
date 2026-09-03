@@ -121,7 +121,6 @@ public class JobServiceImpl implements JobService {
         dto.setStartDate(currentJob.getStartDate());
         dto.setEndDate(currentJob.getEndDate());
         dto.setActive(currentJob.getIsActive());
-        dto.setCreatedAt(currentJob.getCreateAt());
 
         // Set skills for current job
         if (job.getSkills() != null) {
@@ -190,6 +189,7 @@ public class JobServiceImpl implements JobService {
         currentJob.setSalary(job.getSalary());
         currentJob.setQuantity(job.getQuantity());
         currentJob.setLevel(job.getLevel());
+        currentJob.setExperience(job.getExperience());
         currentJob.setDescription(job.getDescription());
         currentJob.setStartDate(job.getStartDate());
         currentJob.setEndDate(job.getEndDate());
@@ -230,8 +230,6 @@ public class JobServiceImpl implements JobService {
 
         dto.setStartDate(currentJob.getStartDate());
         dto.setEndDate(currentJob.getEndDate());
-
-        dto.setActive(currentJob.getIsActive());
 
         if (job.getSkills() != null) {
             List<TotalResponse.JobSkillsDTO> skills = currentJob.getSkills().stream().map(item ->

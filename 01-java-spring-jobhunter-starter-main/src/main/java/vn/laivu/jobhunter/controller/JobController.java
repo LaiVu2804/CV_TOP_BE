@@ -38,7 +38,7 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.OK).body(this.jobService.fetchAllJob(spec, pageable, job));
     }
 
-    @PutMapping("jobs/{id}")
+    @PutMapping("/jobs/{id}")
     @ApiMessage("Updated a job")
     public ResponseEntity<ResCreateJobDTO> updateJob(@Valid @RequestBody Job reqJob) throws IdInvalidException {
         ResCreateJobDTO currentJob = this.jobService.handleUpdateJob(reqJob);

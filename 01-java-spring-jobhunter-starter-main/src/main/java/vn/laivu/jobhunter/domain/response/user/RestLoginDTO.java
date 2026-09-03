@@ -10,24 +10,37 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RestLoginDTO {
-  @JsonProperty("access_token")
-  private  String accessToken;
+    @JsonProperty("access_token")
+    private String accessToken;
+    private UserLogin user;
 
-  private UserLogin user;
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserLogin {
+        private long id;
+        private String email;
+        private String name;
+//        private Role role;
+    }
 
-  @Getter
-  @Setter
-  @NoArgsConstructor
-  @AllArgsConstructor
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserGetAccount {
+        private UserLogin user;
+    }
 
-  public static class UserLogin {
-    private long id;
-    private String email;
-    private String name;
-  }
-
-  public static class UserGetAccount {
-
-  }
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserInsideToken {
+        private long id;
+        private String email;
+        private String name;
+    }
 
 }

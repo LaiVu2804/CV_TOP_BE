@@ -44,24 +44,24 @@ public class Company {
     @NotBlank(message = "logo không được để trống")
     private String logo;
 
-    private Instant createAt;
+    private Instant createdAt;
     private Instant updatedAt;
-    private String createBy;
-    private String updateBy;
+    private String createdBy;
+    private String updatedBy;
 
     @PrePersist
     private void handleBeforeCreate() {
-        this.createBy =
+        this.createdBy =
                 SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
                         .getCurrentUserLogin()
                         .get() : "";
 
-        this.createAt = Instant.now();
+        this.createdAt = Instant.now();
     }
 
     @PreUpdate
     private void handleBeforeUpdateAt() {
-        this.updateBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true ? SecurityUtil
                 .getCurrentUserLogin()
                 .get() : "";
 

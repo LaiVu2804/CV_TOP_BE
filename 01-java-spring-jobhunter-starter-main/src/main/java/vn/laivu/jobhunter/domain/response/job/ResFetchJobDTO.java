@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import vn.laivu.jobhunter.util.constant.Level;
+import vn.laivu.jobhunter.unity.constant.Level;
 
 import java.util.Date;
 import java.util.List;

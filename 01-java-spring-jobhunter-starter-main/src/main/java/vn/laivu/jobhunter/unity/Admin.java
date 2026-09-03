@@ -29,13 +29,13 @@ public class Admin {
   @Column(columnDefinition = "MEDIUMTEXT")
   private String refreshToken;
 
-  private Instant createAt;
+  private Instant createdAt;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
 
   @PrePersist
   private void handleBeforeCreate() {
-    this.createAt = Instant.now();
+    this.createdAt = Instant.now();
   }
 
 }
