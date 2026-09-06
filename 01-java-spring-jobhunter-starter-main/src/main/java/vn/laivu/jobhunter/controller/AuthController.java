@@ -32,7 +32,7 @@ import vn.laivu.jobhunter.util.error.IdInvalidException;
 @RequestMapping("/api/v1")
 public class AuthController {
 
-    @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+    @Value("${laivu.jwt.refresh-token-validity-in-seconds}")
     private long refreshTokenExpiration;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -113,18 +113,23 @@ public class AuthController {
 
     //    Get account nguoi dung
     @GetMapping("/auth/account") //Lay thong tin cua ng dang nhap
-    public ResponseEntity<RestLoginDTO.UserLogin> getAccount() {
-        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+    public ResponseEntity<RestLoginDTO.UserGetAccount> getAccount() {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent()
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
 
         User currentUserDB = this.userService.handleGetUserByUserName(email);
         RestLoginDTO.UserLogin userLogin = new RestLoginDTO.UserLogin();
-
+        RestLoginDTO.UserGetAccount userGetAccount = new RestLoginDTO.UserGetAccount();
         if (currentUserDB != null) {
             userLogin.setId(currentUserDB.getId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
+//            userLogin.setRole(currentUserDB.getRole());
+
+            userGetAccount.setUser(userLogin);
         }
-        return ResponseEntity.ok().body(userLogin);
+        return ResponseEntity.ok().body(userGetAccount);
     }
 
     @GetMapping("/auth/refresh")

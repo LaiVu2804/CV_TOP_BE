@@ -21,6 +21,7 @@ import vn.laivu.jobhunter.unity.Job;
 import vn.laivu.jobhunter.unity.Resume;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.util.SecurityUtil;
+import vn.laivu.jobhunter.util.error.IdInvalidException;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,9 +36,9 @@ public class ResumeServiceImpl implements ResumeService {
     @Autowired
     private FilterSpecificationConverter filterSpecificationConverter;
 
-    private ResumeRepository resumeRepository;
-    private UserRepository userRepository;
-    private JobRepository jobRepository;
+    private final ResumeRepository resumeRepository;
+    private final UserRepository userRepository;
+    private final JobRepository jobRepository;
 
     public ResumeServiceImpl(ResumeRepository resumeRepository, UserRepository userRepository,
                              JobRepository jobRepository) {
@@ -46,26 +47,40 @@ public class ResumeServiceImpl implements ResumeService {
         this.jobRepository = jobRepository;
     }
 
-    public boolean checkResumeExistByUserAndJob(Resume resume) {
+    public void checkResumeExistByUserAndJob(Resume resume) throws IdInvalidException {
         // check user by ID
-        if (resume.getUser() == null) {
-            return false;
+        if (resume.getUser() == null || resume.getUser().getId() <= 0) {
+            throw new IdInvalidException("User không tìm thấy");
         }
         Optional<User> optionalUser = this.userRepository.findById(resume.getUser().getId());
         if (optionalUser.isEmpty()) {
-            return false;
+            throw new IdInvalidException("User không tìm thấy");
         }
+        resume.setUser(optionalUser.get());
 
         // check job by id
-        if (resume.getJob() == null) {
-            return false;
+        if (resume.getJob() == null || resume.getJob().getId() <= 0) {
+            throw new IdInvalidException("Job không tìm thấy");
         }
         Optional<Job> optionalJob = this.jobRepository.findById(resume.getJob().getId());
         if (optionalJob.isEmpty()) {
-            return false;
+            throw new IdInvalidException("Job không tìm thấy");
+        }
+        resume.setJob(optionalJob.get());
+    }
+
+    public void checkResumeExistForUpdate(Resume resume, Resume reqResume) throws IdInvalidException {
+        // check user
+        User userToCheck = resume.getUser() != null ? resume.getUser() : reqResume.getUser();
+        if (userToCheck == null || userToCheck.getId() <= 0 || this.userRepository.findById(userToCheck.getId()).isEmpty()) {
+            throw new IdInvalidException("User không tìm thấy");
         }
 
-        return true;
+        // check job
+        Job jobToCheck = resume.getJob() != null ? resume.getJob() : reqResume.getJob();
+        if (jobToCheck == null || jobToCheck.getId() <= 0 || this.jobRepository.findById(jobToCheck.getId()).isEmpty()) {
+            throw new IdInvalidException("Job không tìm thấy");
+        }
     }
 
     public ResCreateResumeDTO createResume(Resume resume) {
@@ -147,6 +162,7 @@ public class ResumeServiceImpl implements ResumeService {
 
         ResultPaginationDTO res = new ResultPaginationDTO();
         ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
+
         // Get from frontend send request
         mt.setPage(pageable.getPageNumber() + 1);
         mt.setPageSize(pageable.getPageSize());
@@ -155,7 +171,7 @@ public class ResumeServiceImpl implements ResumeService {
         mt.setTotal(page.getTotalElements());
         res.setMeta(mt);
 
-        // remove senstive data
+        // remove sensitive data
         List<ResFetchResumeDTO> listResume = page.getContent()
                 .stream().map(item -> this.getResume(item))
                 .collect(Collectors.toList());

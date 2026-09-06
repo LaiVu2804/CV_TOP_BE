@@ -15,7 +15,10 @@ import vn.laivu.jobhunter.service.JobService;
 import vn.laivu.jobhunter.unity.Company;
 import vn.laivu.jobhunter.unity.Job;
 import vn.laivu.jobhunter.unity.Skill;
+import vn.laivu.jobhunter.util.SecurityUtil;
+import vn.laivu.jobhunter.util.error.IdInvalidException;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -86,25 +89,35 @@ public class JobServiceImpl implements JobService {
         return rs;
     }
 
-    public ResCreateJobDTO handleCreateJob(Job job) {
+    public ResCreateJobDTO handleCreateJob(Job job) throws IdInvalidException {
         // check skills
-        if (job.getSkills() != null) {
-            // Get list skill id - Long
-            List<Long> reqSkills = job.getSkills()
-                    .stream().map(x -> x.getId())
-                    .collect(Collectors.toList());
-            // Get list skill by Id
-            List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
-            job.setSkills(dbSkills);
+        if (job.getSkills() == null || job.getSkills().isEmpty()) {
+            throw new IdInvalidException("Skill không tìm thấy");
         }
+        List<Long> reqSkills = job.getSkills()
+                .stream()
+                .filter(x -> x != null && x.getId() > 0)
+                .map(Skill::getId)
+                .distinct()
+                .collect(Collectors.toList());
+        if (reqSkills.isEmpty() || reqSkills.size() != job.getSkills().size()) {
+            throw new IdInvalidException("Skill không tìm thấy");
+        }
+        List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
+        if (dbSkills.size() != reqSkills.size()) {
+            throw new IdInvalidException("Skill không tìm thấy");
+        }
+        job.setSkills(dbSkills);
 
         // check company
-        if (job.getCompany() != null) {
-            Optional<Company> companyOptional = this.companyRepository.findById(job.getCompany().getId());
-            if (companyOptional.isPresent()) {
-                job.setCompany(companyOptional.get());
-            }
+        if (job.getCompany() == null || job.getCompany().getId() <= 0) {
+            throw new IdInvalidException("Company không tìm thấy");
         }
+        Optional<Company> companyOptional = this.companyRepository.findById(job.getCompany().getId());
+        if (companyOptional.isEmpty()) {
+            throw new IdInvalidException("Company không tìm thấy");
+        }
+        job.setCompany(companyOptional.get());
         // Create job
         Job currentJob = this.jobRepository.save(job);
 
@@ -178,10 +191,44 @@ public class JobServiceImpl implements JobService {
                 }).orElseThrow(() -> new RuntimeException("Job với id = " + id + " không tồn tại"));
     }
 
-    public ResCreateJobDTO handleUpdateJob(Job job) {
+    public ResCreateJobDTO handleUpdateJob(Job job) throws IdInvalidException {
+        if (job.getId() <= 0) {
+            throw new IdInvalidException("Job không tìm thấy");
+        }
         // Get existing job from database to preserve createdAt and createdBy
-        Job currentJob = this.jobRepository.findById(job.getId()).orElseThrow(() ->
-                new RuntimeException("Job không tồn tại với id = " + job.getId()));
+        Job currentJob = this.jobRepository.findById(job.getId()).orElse(null);
+        if (currentJob == null) {
+            throw new IdInvalidException("Job không tìm thấy");
+        }
+
+        // check skills
+        if (job.getSkills() == null || job.getSkills().isEmpty()) {
+            throw new IdInvalidException("Skill không tìm thấy");
+        }
+        List<Long> reqSkills = job.getSkills()
+                .stream()
+                .filter(x -> x != null && x.getId() > 0)
+                .map(Skill::getId)
+                .distinct()
+                .collect(Collectors.toList());
+        if (reqSkills.isEmpty() || reqSkills.size() != job.getSkills().size()) {
+            throw new IdInvalidException("Skill không tìm thấy");
+        }
+        List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
+        if (dbSkills.size() != reqSkills.size()) {
+            throw new IdInvalidException("Skill không tìm thấy");
+        }
+        currentJob.setSkills(dbSkills);
+
+        // check company
+        if (job.getCompany() == null || job.getCompany().getId() <= 0) {
+            throw new IdInvalidException("Company không tìm thấy");
+        }
+        Optional<Company> opCompany = this.companyRepository.findById(job.getCompany().getId());
+        if (opCompany.isEmpty()) {
+            throw new IdInvalidException("Company không tìm thấy");
+        }
+        currentJob.setCompany(opCompany.get());
 
         // Update only the modifiable fields
         currentJob.setName(job.getName());
@@ -195,23 +242,10 @@ public class JobServiceImpl implements JobService {
         currentJob.setEndDate(job.getEndDate());
         currentJob.setIsActive(job.getIsActive());
 
-        // check skills
-        if (job.getSkills() != null) {
-            List<Long> reqSkills = job.getSkills()
-                    .stream().map(x -> x.getId())
-                    .collect(Collectors.toList());
-
-            List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
-            currentJob.setSkills(dbSkills);
-        }
-
-        // check company
-        if (job.getCompany() != null) {
-            Optional<Company> opCompany = this.companyRepository.findById(job.getCompany().getId());
-            if (opCompany.isPresent()) {
-                currentJob.setCompany(opCompany.get());
-            }
-        }
+        currentJob.setUpdatedAt(Instant.now());
+        currentJob.setUpdatedBy(SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "");
 
         // update job (this will trigger @PreUpdate which sets updatedAt and updatedBy)
         currentJob = this.jobRepository.save(currentJob);
@@ -230,8 +264,9 @@ public class JobServiceImpl implements JobService {
 
         dto.setStartDate(currentJob.getStartDate());
         dto.setEndDate(currentJob.getEndDate());
+        dto.setActive(currentJob.getIsActive());
 
-        if (job.getSkills() != null) {
+        if (currentJob.getSkills() != null) {
             List<TotalResponse.JobSkillsDTO> skills = currentJob.getSkills().stream().map(item ->
                             new TotalResponse.JobSkillsDTO(item.getId(), item.getName()))
                     .collect(Collectors.toList());

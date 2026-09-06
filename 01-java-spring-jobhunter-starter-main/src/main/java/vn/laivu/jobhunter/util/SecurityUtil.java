@@ -36,13 +36,13 @@ public class SecurityUtil {
 
   public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
 
-  @Value("${hoidanit.jwt.access-token-validity-in-seconds}")
+  @Value("${laivu.jwt.access-token-validity-in-seconds}")
   private long accessTokenExpiration;
 
-  @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+  @Value("${laivu.jwt.refresh-token-validity-in-seconds}")
   private long refreshTokenExpiration;
 
-  @Value("${hoidanit.jwt.base64-secret}")
+  @Value("${laivu.jwt.base64-secret}")
   private String jwtKey;
 
   public String createAccessToken(String email, RestLoginDTO dto) { //thời gian tạo ra token

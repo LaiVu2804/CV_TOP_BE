@@ -1,6 +1,7 @@
 package vn.laivu.jobhunter.unity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class Resume {
 
     @NotBlank(message = "email không được để trống")
     private String email;
+
     @NotBlank(message = "URI không được để trống (Chưa upload CV thành công)")
     private String url;
 
@@ -42,6 +44,8 @@ public class Resume {
     @JoinColumn(name = "job_id")
     private Job job;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
+
     @PrePersist
     public void handleBeforeCreate() {
         this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
@@ -54,7 +58,7 @@ public class Resume {
     public void handleBeforeUpdate() {
         this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get()
-                : null;
+                : "";
         this.updatedAt = Instant.now();
     }
 }

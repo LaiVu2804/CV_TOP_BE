@@ -27,7 +27,7 @@ public class JobController {
 
     @PostMapping("/jobs")
     @ApiMessage("Created a job")
-    public ResponseEntity<ResCreateJobDTO> createNewJob(@Valid @RequestBody Job job) {
+    public ResponseEntity<ResCreateJobDTO> createNewJob(@Valid @RequestBody Job job) throws IdInvalidException {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.jobService.handleCreateJob(job));
     }
 
@@ -38,14 +38,19 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.OK).body(this.jobService.fetchAllJob(spec, pageable, job));
     }
 
-    @PutMapping("/jobs/{id}")
+    @PutMapping({"/jobs/{id}", "/jobs"})
     @ApiMessage("Updated a job")
-    public ResponseEntity<ResCreateJobDTO> updateJob(@Valid @RequestBody Job reqJob) throws IdInvalidException {
+    public ResponseEntity<ResCreateJobDTO> updateJob(
+            @PathVariable(value = "id", required = false) Long id,
+            @Valid @RequestBody Job reqJob) throws IdInvalidException {
+        if (id != null) {
+            reqJob.setId(id);
+        }
         ResCreateJobDTO currentJob = this.jobService.handleUpdateJob(reqJob);
         if (currentJob == null) {
-            throw new IdInvalidException("Job not found");
+            throw new IdInvalidException("Job không tìm thấy");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(this.jobService.handleUpdateJob(reqJob));
+        return ResponseEntity.status(HttpStatus.OK).body(currentJob);
     }
 
     @GetMapping("/jobs/{id}")

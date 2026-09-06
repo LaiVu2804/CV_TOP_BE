@@ -14,6 +14,9 @@ import vn.laivu.jobhunter.domain.response.user.RestCreateUserDTO;
 import vn.laivu.jobhunter.domain.response.user.RestUserDTO;
 import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 
+import vn.laivu.jobhunter.util.SecurityUtil;
+
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,8 +60,10 @@ public class UserService {
         currentUser.setName(user.getName());
         currentUser.setAddress(user.getAddress());
         currentUser.setAge(user.getAge());
-        currentUser.setUpdatedAt(user.getUpdatedAt());
-        currentUser.setUpdatedBy(user.getUpdatedBy());
+        currentUser.setUpdatedAt(Instant.now());
+        currentUser.setUpdatedBy(SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "");
 
         // check company
         if (user.getCompany() != null) {

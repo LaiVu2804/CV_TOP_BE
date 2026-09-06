@@ -7,13 +7,17 @@ import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 import vn.laivu.jobhunter.domain.response.resume.ResCreateResumeDTO;
 import vn.laivu.jobhunter.domain.response.resume.ResFetchResumeDTO;
 import vn.laivu.jobhunter.domain.response.resume.ResUpdateResumeDTO;
+import vn.laivu.jobhunter.unity.Job;
 import vn.laivu.jobhunter.unity.Resume;
+import vn.laivu.jobhunter.util.error.IdInvalidException;
 
 import java.util.Optional;
 
 @Service
 public interface ResumeService {
-    boolean checkResumeExistByUserAndJob(Resume resume);
+    void checkResumeExistByUserAndJob(Resume resume) throws IdInvalidException;
+
+    void checkResumeExistForUpdate(Resume resume, Resume reqResume) throws IdInvalidException;
 
     ResCreateResumeDTO createResume(Resume resume);
 
