@@ -21,7 +21,6 @@ public class ResFetchJobDTO {
     private String location;
     private String description;
     private Double salary;
-    private String experience;
 
     private Date startDate;
     private Date endDate;

@@ -16,7 +16,7 @@ import vn.laivu.jobhunter.util.Annotation.ApiMessage;
 import vn.laivu.jobhunter.util.error.IdInvalidException;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/${api.version}")
 public class JobController {
 
     private final JobService jobService;

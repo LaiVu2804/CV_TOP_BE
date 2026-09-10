@@ -40,6 +40,7 @@ public class TotalResponse {
     public static class JobCompanyDTO {
         private long id;
         private String name;
+        private String logo;
     }
 
     @Getter

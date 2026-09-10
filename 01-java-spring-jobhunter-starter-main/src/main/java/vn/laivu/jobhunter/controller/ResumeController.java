@@ -34,7 +34,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/${api.version}")
 public class ResumeController {
 
     @Autowired
@@ -60,11 +60,11 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.resumeService.createResume(resume));
     }
 
-    @PutMapping("/resumes/{id}")
+    @PutMapping({"/resumes/{id}", "/resumes"})
     @ApiMessage("Update a resume")
     public ResponseEntity<ResUpdateResumeDTO> update(
             @PathVariable(value = "id", required = false) Long id,
-            @Valid @RequestBody Resume resume) throws IdInvalidException {
+            @RequestBody Resume resume) throws IdInvalidException {
         if (id != null) {
             resume.setId(id);
         }

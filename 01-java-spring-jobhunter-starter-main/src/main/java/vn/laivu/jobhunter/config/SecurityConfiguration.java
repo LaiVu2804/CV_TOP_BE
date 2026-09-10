@@ -66,6 +66,9 @@ public class SecurityConfiguration {
         };
     }
 
+    @Value("${api.version}")
+    private String apiVersion;
+
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
@@ -73,10 +76,10 @@ public class SecurityConfiguration {
     ) throws Exception {
         String[] whiteList = {
                 "/",
-                "/api/v1/auth/login",
-                "/api/v1/auth/refresh",
-                "/api/v1/auth/auth/register",
-                "/api/v1/auth/email/**",
+                "/api/" + apiVersion + "/auth/login",
+                "/api/" + apiVersion + "/auth/refresh",
+                "/api/" + apiVersion + "/auth/register",
+                "/api/" + apiVersion + "/email/**",
                 "/storage/**",
                 "/v3/api-docs/**",
                 "/swagger-ui/**",
@@ -90,13 +93,11 @@ public class SecurityConfiguration {
                         authz -> authz
                                 /* Cho phép vào trang /** từ URL */
                                 .requestMatchers(whiteList).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/companies/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/jobs/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/skills/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/" + apiVersion + "/companies/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/" + apiVersion + "/jobs/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/" + apiVersion + "/skills/**").permitAll()
                                 /* Còn lại bất cứ request nào buộc phải xác thực */
-                                .anyRequest().permitAll()
-                        // .anyRequest().permitAll()
-                )
+                                .anyRequest().permitAll())
                 .oauth2ResourceServer((oauth2)
                         -> oauth2.jwt(
                                 Customizer.withDefaults()) //sẽ kích hoạt filter BearerTokenAuthenticationFilter,

@@ -29,7 +29,7 @@ import vn.laivu.jobhunter.util.SecurityUtil;
 import vn.laivu.jobhunter.util.error.IdInvalidException;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/${api.version}")
 public class AuthController {
 
     @Value("${laivu.jwt.refresh-token-validity-in-seconds}")
@@ -72,8 +72,8 @@ public class AuthController {
             RestLoginDTO.UserLogin userLogin = new RestLoginDTO.UserLogin(
                     currentUserDB.getId(),
                     currentUserDB.getEmail(),
-                    currentUserDB.getName()
-//                    currentUserDB.getRole()
+                    currentUserDB.getName(),
+                    currentUserDB.getRole()
             );
             resLoginDTO.setUser(userLogin);
         }
@@ -125,7 +125,7 @@ public class AuthController {
             userLogin.setId(currentUserDB.getId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
-//            userLogin.setRole(currentUserDB.getRole());
+            userLogin.setRole(currentUserDB.getRole());
 
             userGetAccount.setUser(userLogin);
         }
@@ -160,6 +160,7 @@ public class AuthController {
             userLogin.setId(currentUserDB.getId());
             userLogin.setEmail(currentUserDB.getEmail());
             userLogin.setName(currentUserDB.getName());
+            userLogin.setRole(currentUserDB.getRole());
             res.setUser(userLogin);
         }
 

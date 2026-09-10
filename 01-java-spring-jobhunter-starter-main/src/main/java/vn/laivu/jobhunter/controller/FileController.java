@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/${api.version}")
 public class FileController {
 
     @Value("${laivu.upload-file.base-uri}")

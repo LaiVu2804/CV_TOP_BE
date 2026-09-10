@@ -33,9 +33,9 @@ public class CompanyServiceImpl implements CompanyService {
 
         ResultPaginationDTO.Meta meta = new ResultPaginationDTO.Meta();
         meta.setPage(pageable.getPageNumber() + 1);
-        meta.setTotal(pageable.getPageNumber());
+        meta.setTotal(pageable.getPageSize());
         meta.setPages(pageCompany.getTotalPages());
-        meta.setPageSize(pageCompany.getTotalPages());
+        meta.setTotal(pageCompany.getTotalElements());
 
         ResultPaginationDTO rs = new ResultPaginationDTO();
         rs.setMeta(meta);
@@ -55,8 +55,12 @@ public class CompanyServiceImpl implements CompanyService {
         return rs;
     }
 
-    public Optional<Company> getComById(Long id) {
-        return companyRepository.findById(id);
+    public Company handleGetCompanyById(long id) {
+        Optional<Company> optional = this.companyRepository.findById(id);
+        if (optional.isPresent()) {
+            return optional.get();
+        }
+        return null;
     }
 
     public Company updateCom(Long id, Company updateCom) {

@@ -12,9 +12,11 @@ import vn.laivu.jobhunter.unity.Company;
 import vn.laivu.jobhunter.domain.response.ApiResponse;
 import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 import vn.laivu.jobhunter.service.CompanyService;
+import vn.laivu.jobhunter.util.Annotation.ApiMessage;
+import vn.laivu.jobhunter.util.error.IdInvalidException;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/${api.version}")
 public class CompanyController {
 
     private final CompanyService companyService;
@@ -37,17 +39,13 @@ public class CompanyController {
     }
 
     @GetMapping("/companies/{id}")
-    public ResponseEntity<ApiResponse<Company>> getUserById(@PathVariable Long id) {
-        return companyService.getComById(id).map(user -> {
-
-            var response = new ApiResponse<>(HttpStatus.OK, "getUserById", user, null);
-
-            return ResponseEntity.ok().body(response);
-
-        }).orElseGet(() -> {
-            ApiResponse<Company> adminResponse = new ApiResponse<>(HttpStatus.NOT_FOUND, "không tìm thấy user của id " + id, null, "User not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(adminResponse);
-        });
+    @ApiMessage("Fetch company by id")
+    public ResponseEntity<Company> fetchById(@PathVariable("id") long id) throws IdInvalidException {
+        Company company = this.companyService.handleGetCompanyById(id);
+        if(company == null) {
+            throw new IdInvalidException("Company ID: " + id + " không tồn tại");
+        }
+        return ResponseEntity.ok().body(company);
     }
 
     @PutMapping("/companies/{id}")

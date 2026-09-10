@@ -45,7 +45,7 @@ public class JobServiceImpl implements JobService {
         meta.setPage(pageable.getPageNumber() + 1);
         meta.setTotal(pageable.getPageNumber());
         meta.setPages(pageJob.getTotalPages());
-        meta.setPageSize(pageJob.getTotalPages());
+        meta.setTotal(pageJob.getTotalElements());
 
         ResultPaginationDTO rs = new ResultPaginationDTO();
         rs.setMeta(meta);
@@ -56,7 +56,8 @@ public class JobServiceImpl implements JobService {
             TotalResponse.JobCompanyDTO companyDto = item.getCompany() != null
                     ? new TotalResponse.JobCompanyDTO(
                     item.getCompany().getId(),
-                    item.getCompany().getName())
+                    item.getCompany().getName(),
+                    item.getCompany().getLogo())
                     : null;
 
             List<TotalResponse.JobSkillsDTO> skillDtoList = item.getSkills() != null
@@ -76,7 +77,6 @@ public class JobServiceImpl implements JobService {
                     item.getLocation(),
                     item.getDescription(),
                     item.getSalary(),
-                    item.getExperience(),
                     item.getStartDate(),
                     item.getEndDate(),
                     item.getIsActive(),
@@ -130,7 +130,6 @@ public class JobServiceImpl implements JobService {
         dto.setQuantity(currentJob.getQuantity());
         dto.setLevel(currentJob.getLevel());
         dto.setDescription(currentJob.getDescription());
-        dto.setExperience(currentJob.getExperience());
         dto.setStartDate(currentJob.getStartDate());
         dto.setEndDate(currentJob.getEndDate());
         dto.setActive(currentJob.getIsActive());
@@ -162,7 +161,7 @@ public class JobServiceImpl implements JobService {
                 .map(job -> {
                     // 1. Map Company (nếu có)
                     TotalResponse.JobCompanyDTO companyDTO = Optional.ofNullable(job.getCompany())
-                            .map(c -> new TotalResponse.JobCompanyDTO(c.getId(), c.getName()))
+                            .map(c -> new TotalResponse.JobCompanyDTO(c.getId(), c.getName(), c.getLogo()))
                             .orElse(null);
 
                     // 2. Map List<Skill> sang List<SkillDTO> bằng Stream API
@@ -181,7 +180,6 @@ public class JobServiceImpl implements JobService {
                             job.getLocation(),
                             job.getDescription(),
                             job.getSalary(),
-                            job.getExperience(),
                             job.getStartDate(),
                             job.getEndDate(),
                             job.getIsActive(),
@@ -236,7 +234,6 @@ public class JobServiceImpl implements JobService {
         currentJob.setSalary(job.getSalary());
         currentJob.setQuantity(job.getQuantity());
         currentJob.setLevel(job.getLevel());
-        currentJob.setExperience(job.getExperience());
         currentJob.setDescription(job.getDescription());
         currentJob.setStartDate(job.getStartDate());
         currentJob.setEndDate(job.getEndDate());
@@ -259,7 +256,6 @@ public class JobServiceImpl implements JobService {
         dto.setSalary(currentJob.getSalary());
         dto.setQuantity(currentJob.getQuantity());
         dto.setLevel(currentJob.getLevel());
-        dto.setExperience(currentJob.getExperience());
         dto.setDescription(currentJob.getDescription());
 
         dto.setStartDate(currentJob.getStartDate());

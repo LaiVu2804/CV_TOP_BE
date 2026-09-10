@@ -33,7 +33,7 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.permissionService.create(p));
     }
 
-    @PutMapping("/permissions")
+    @PutMapping("/permissions/{id}")
     @ApiMessage("Update a permission")
     public ResponseEntity<Permission> update(@Valid @RequestBody Permission p) throws IdInvalidException {
         // check ID exist?
@@ -69,5 +69,15 @@ public class PermissionController {
             @Filter Specification<Permission> specification, Pageable pageAble) {
 
         return ResponseEntity.ok(this.permissionService.getPermissions(specification, pageAble));
+    }
+
+    @GetMapping("/permissions/{id}")
+    @ApiMessage("Get permissions by id")
+    public ResponseEntity<Permission> getRole(@PathVariable("id") long id) throws IdInvalidException {
+        Permission permission = this.permissionService.fetchById(id);
+        if(permission == null) {
+            throw new IdInvalidException("Permission ID " + id + " not found");
+        }
+        return ResponseEntity.ok().body(permission);
     }
 }

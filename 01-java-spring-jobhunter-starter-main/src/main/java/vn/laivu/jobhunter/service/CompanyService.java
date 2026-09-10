@@ -19,9 +19,5 @@ public interface CompanyService {
 
     void deleteCom(Long id);
 
-    //chi dung optional cho doc du lieu
-    Optional<Company> getComById(Long id);
-
-    //Tim du lieu cho company
-//    Optional<Company> findById(Long id);
+    Company handleGetCompanyById(long id);
 }

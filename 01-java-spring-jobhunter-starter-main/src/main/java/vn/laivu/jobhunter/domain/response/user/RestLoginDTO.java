@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import vn.laivu.jobhunter.unity.Role;
 
 @Getter
 @Setter
@@ -22,7 +23,7 @@ public class RestLoginDTO {
         private long id;
         private String email;
         private String name;
-//        private Role role;
+        private Role role;
     }
 
     @Getter

@@ -76,23 +76,32 @@ public class SecurityUtil {
   }
 
 
-  public String createRefreshToken(String email, RestLoginDTO dto) { //thời gian tạo ra token
-    Instant now = Instant.now();
-    Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
+    public String createRefreshToken(String email, RestLoginDTO dto) {
+        RestLoginDTO.UserInsideToken userInsideToken = new RestLoginDTO.UserInsideToken();
+        userInsideToken.setId(dto.getUser().getId());
+        userInsideToken.setEmail(dto.getUser().getEmail());
+        userInsideToken.setName(dto.getUser().getName());
 
-    // @formatter:off ( tạo ra phần body )
-    JwtClaimsSet claims = JwtClaimsSet.builder()
-        .issuedAt(now)
-        .expiresAt(validity)
-        .subject(email)
-        .claim("user", dto.getUser())
-        .build();
+        // Lấy thời gian hiện tại
+        Instant now = Instant.now();
+        // Công thêm mốc thời gian quy định
+        Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
-    //Tạo ra phần hearder
-    JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
-    return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims))
-        .getTokenValue();
-  }
+        // @formatter:off
+        JwtClaimsSet claims = JwtClaimsSet.builder()
+                .issuedAt(now)
+                .expiresAt(validity)
+                // key word: identifies chìa khoá định danh người dùng là ai? (Lấy từ email là unique)
+                .subject(email)
+                // claim chỉ thành phần mô tả subject trên lưu là gì cũng đc,
+                // đối với refresh token lưu thông tin là user, thì dùng user
+                .claim("user", userInsideToken) // your claim name (your name)
+                .build();
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+        // Mã hoá từ thuật toán đã config
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
+    }
 
   /**
    * Get the JWT of the current user.

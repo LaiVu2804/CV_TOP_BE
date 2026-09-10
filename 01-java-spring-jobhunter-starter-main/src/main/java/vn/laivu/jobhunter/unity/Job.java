@@ -51,10 +51,6 @@ public class Job {
 
     @Column(columnDefinition = "LONGTEXT")
     private String description;
-
-    @Column(columnDefinition = "MEDIUMTEXT")
-    private String experience;
-
     private Date startDate;
     private Date endDate;
     private Boolean isActive;
