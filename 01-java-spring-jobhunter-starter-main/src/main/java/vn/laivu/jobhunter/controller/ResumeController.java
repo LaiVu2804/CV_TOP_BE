@@ -64,7 +64,8 @@ public class ResumeController {
     @ApiMessage("Update a resume")
     public ResponseEntity<ResUpdateResumeDTO> update(
             @PathVariable(value = "id", required = false) Long id,
-            @RequestBody Resume resume) throws IdInvalidException {
+            @Valid @RequestBody Resume resume) throws IdInvalidException {
+
         if (id != null) {
             resume.setId(id);
         }
