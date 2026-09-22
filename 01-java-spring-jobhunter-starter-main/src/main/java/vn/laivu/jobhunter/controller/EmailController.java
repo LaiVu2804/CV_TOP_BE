@@ -5,56 +5,49 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.laivu.jobhunter.service.EmailService;
 import vn.laivu.jobhunter.service.SubscriberService;
+import vn.laivu.jobhunter.unity.Subscriber;
 import vn.laivu.jobhunter.util.Annotation.ApiMessage;
+import vn.laivu.jobhunter.util.SecurityUtil;
+import vn.laivu.jobhunter.util.error.IdInvalidException;
 
 @RestController
 @RequestMapping("/api/${api.version}")
 public class EmailController {
 
-    private final EmailService emailService;
     private final SubscriberService subscriberService;
 
-    public EmailController(EmailService emailService, SubscriberService subscriberService) {
-        this.emailService = emailService;
+    public EmailController(SubscriberService subscriberService) {
         this.subscriberService = subscriberService;
     }
 
-    @GetMapping("/send-simple-email")
-    @ApiMessage("Send test simple email")
-    public String sendSimpleEmail() {
-        emailService.sendSimpleEmail();
-        return "OK";
-    }
-
-    @GetMapping("/send-email-sync")
-    @ApiMessage("Send Email Sync")
-    public String sendEmailSync() {
-        emailService.sendEmailSync(
-                "laivu4864@gmail.com",
-                "Test send email",
-                "<h1><b>Hello</b></h1>",
-                false,
-                true);
-        return "OK";
-    }
-
-
+//Gửi cho các email tồn tại tròn database
     @GetMapping("/email")
     @ApiMessage("Send Email Sync")
     // @Transactional // tạo session vì hành động scheduled là tự động
     // @Scheduled(cron = "*/30 * * * * *") // 60s chạy 1 lần
     public String sendEmailFromTemplateSync() {
-        this.emailService.sendEmailFromTemplateSync("laivu4864@gmail.com","Test send email","job");
+        this.subscriberService.sendSubscribersEmailJobs();
         return "OK";
     }
 
+    //Chỉ gửi theo bearer token
+    @GetMapping("/email/subscriber")
+    @ApiMessage("Send email to current subscriber")
+    public String sendEmailToCurrentSubscriber() throws IdInvalidException {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
 
-//    @GetMapping("/email")
-//    @ApiMessage("Send Email Sync")
-//    // @Transactional // tạo session vì hành động scheduled là tự động
-//    // @Scheduled(cron = "*/30 * * * * *") // 60s chạy 1 lần
-//    public String sendEmailFromTemplateSync() {
-//        this.subscriberService.sendSubscribersEmailJobs();
-//        return "OK";
-//    }
+        if (email.isEmpty()) {
+            throw new IdInvalidException("Access Token không hợp lệ hoặc bạn chưa đăng nhập");
+        }
+
+        Subscriber subscriber = this.subscriberService.findByEmail(email);
+        if (subscriber == null) {
+            throw new IdInvalidException("Không tìm thấy thông tin đăng ký (subscriber) với email: " + email);
+        }
+
+        this.subscriberService.sendSubscribersEmailJobByEmail(email);
+        return "OK";
+    }
 }

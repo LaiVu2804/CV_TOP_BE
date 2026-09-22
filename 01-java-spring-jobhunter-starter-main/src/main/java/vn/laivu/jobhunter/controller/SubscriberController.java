@@ -47,5 +47,25 @@ public class SubscriberController {
                 : "";
         return ResponseEntity.ok().body(this.subscriberService.findByEmail(email));
     }
+
+    @PostMapping("/subscribers/send-email")
+    @ApiMessage("Send job email to current subscriber")
+    public ResponseEntity<Void> sendSubscribersEmail() throws IdInvalidException {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() == true
+                ? SecurityUtil.getCurrentUserLogin().get()
+                : "";
+
+        if (email.isEmpty()) {
+            throw new IdInvalidException("Access Token không hợp lệ hoặc bạn chưa đăng nhập");
+        }
+
+        Subscriber subscriber = this.subscriberService.findByEmail(email);
+        if (subscriber == null) {
+            throw new IdInvalidException("Không tìm thấy thông tin đăng ký (subscriber) với email: " + email);
+        }
+
+        this.subscriberService.sendSubscribersEmailJobByEmail(email);
+        return ResponseEntity.ok().body(null);
+    }
 }
 

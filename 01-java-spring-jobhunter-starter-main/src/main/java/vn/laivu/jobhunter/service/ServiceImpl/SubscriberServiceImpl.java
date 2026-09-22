@@ -11,6 +11,13 @@ import vn.laivu.jobhunter.unity.Job;
 import vn.laivu.jobhunter.unity.Skill;
 import vn.laivu.jobhunter.unity.Subscriber;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,10 +45,16 @@ public class SubscriberServiceImpl implements SubscriberService {
     }
 
     public Subscriber create(Subscriber subs) {
+        // check email
+        boolean isExistEmail = this.subscriberRepository.existsByEmail(subs.getEmail());
+        if (isExistEmail) {
+            return null;
+        }
+
         // check skills
         if (subs.getSkills() != null) {
             List<Long> reqSkills = subs.getSkills()
-                    .stream().map(x -> x.getId())
+                    .stream().map(Skill::getId)
                     .collect(Collectors.toList());
 
             List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
@@ -63,7 +76,7 @@ public class SubscriberServiceImpl implements SubscriberService {
         // check skills
         if (subsRequest.getSkills() != null) {
             List<Long> reqSkills = subsRequest.getSkills()
-                    .stream().map(x -> x.getId())
+                    .stream().map(Skill::getId)
                     .collect(Collectors.toList());
 
             List<Skill> dbSkills = this.skillRepository.findByIdIn(reqSkills);
@@ -76,39 +89,70 @@ public class SubscriberServiceImpl implements SubscriberService {
         ResEmailJob res = new ResEmailJob();
         res.setName(job.getName());
         res.setSalary(job.getSalary());
-        res.setCompany(new ResEmailJob.CompanyEmail(job.getCompany().getName()));
-        List<Skill> skills = job.getSkills();
-        List<ResEmailJob.SkillEmail> s = skills.stream().map(skill -> new ResEmailJob.SkillEmail(skill.getName()))
-                .collect(Collectors.toList());
-        res.setSkills(s);
+        res.setLocation(job.getLocation());
+        if (job.getCompany() != null) {
+            res.setCompany(new ResEmailJob.CompanyEmail(job.getCompany().getName()));
+        }
+        if (job.getSkills() != null) {
+            List<ResEmailJob.SkillEmail> s = job.getSkills().stream().map(skill -> new ResEmailJob.SkillEmail(skill.getName()))
+                    .collect(Collectors.toList());
+            res.setSkills(s);
+        } else {
+            res.setSkills(new ArrayList<>());
+        }
         return res;
     }
 
-//    public void sendSubscribersEmailJobs() {
-//        List<Subscriber> listSubs = this.subscriberRepository.findAll();
-//        if (listSubs != null && listSubs.size() > 0) {
-//            for (Subscriber sub : listSubs) {
-//                List<Skill> listSkills = sub.getSkills();
-//                if (listSkills != null && listSkills.size() > 0) {
-//                    List<Job> listJobs = this.jobRepository.findBySkillsIn(listSkills);
-//                    if (listJobs != null && listJobs.size() > 0) {
-//
-//                        /* Fix bug thymeleaf exceptions TemplateInputException */
-//                        List<ResEmailJob> arr = listJobs.stream().map(job -> this.convertJobToSendEmail(job))
-//                                .collect(Collectors.toList());
-//
-//                        this.emailService.sendEmailFromTemplateSync(
-//                                sub.getEmail(),
-//                                "Cơ hội việc làm hot đang chờ đón bạn, khám phá ngay",
-//                                "jobs",
-//                                sub.getName(),
-//                                // listJobs); // Giải thích ở file SubscriberService
-//                                arr);
-//                    }
-//                }
-//            }
-//        }
-//    }
+    public void sendEmailToSingleSubscriber(Subscriber sub) {
+        if (sub == null) {
+            return;
+        }
+        List<Skill> listSkills = sub.getSkills();
+
+        if (listSkills != null && !listSkills.isEmpty()) {
+            List<Job> listJobs = this.jobRepository.findBySkillsIn(listSkills);
+
+            if (listJobs != null && !listJobs.isEmpty()) {
+                List<ResEmailJob> arr = listJobs.stream().map(this::convertJobToSendEmail)
+                        .collect(Collectors.toList());
+
+                this.emailService.sendEmailFromTemplateSync(
+                        sub.getEmail(),
+                        "Cơ hội việc làm hot đang chờ đón bạn, khám phá ngay",
+                        "jobs",
+                        sub.getName(),
+                        arr);
+            }
+        }
+    }
+
+    @Transactional
+    public void sendSubscribersEmailJobByEmail(String email) {
+        Subscriber sub = this.subscriberRepository.findByEmail(email);
+        if (sub != null) {
+            this.sendEmailToSingleSubscriber(sub);
+        }
+    }
+
+    @Transactional
+    public void sendSubscribersEmailJobs() {
+        int page = 0;
+        int pageSize = 100; // Số lượng subscriber xử lý trong mỗi batch
+        Page<Subscriber> pageSubs;
+
+        do {
+            Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id").ascending());
+            pageSubs = this.subscriberRepository.findAll(pageable);
+            List<Subscriber> listSubs = pageSubs.getContent();
+
+            if (listSubs != null && !listSubs.isEmpty()) {
+                for (Subscriber sub : listSubs) {
+                    this.sendEmailToSingleSubscriber(sub);
+                }
+            }
+            page++;
+        } while (pageSubs.hasNext());
+    }
 
     public Subscriber findByEmail(String email) {
         return this.subscriberRepository.findByEmail(email);

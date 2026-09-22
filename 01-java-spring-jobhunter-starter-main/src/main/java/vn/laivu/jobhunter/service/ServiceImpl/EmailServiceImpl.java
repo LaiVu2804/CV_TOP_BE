@@ -13,12 +13,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import vn.laivu.jobhunter.repository.JobRepository;
 import vn.laivu.jobhunter.service.EmailService;
-import vn.laivu.jobhunter.unity.Job;
-import vn.laivu.jobhunter.domain.response.subscriber.ResEmailJob;
-
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -26,13 +21,11 @@ public class EmailServiceImpl implements EmailService {
     private final MailSender mailSender;
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
-    private final JobRepository jobRepository;
 
-    public EmailServiceImpl(MailSender mailSender, JavaMailSender javaMailSender, SpringTemplateEngine templateEngine, JobRepository jobRepository) {
+    public EmailServiceImpl(MailSender mailSender, JavaMailSender javaMailSender, SpringTemplateEngine templateEngine) {
         this.mailSender = mailSender;
         this.javaMailSender = javaMailSender;
         this.templateEngine = templateEngine;
-        this.jobRepository = jobRepository;
     }
 
     public void sendSimpleEmail() {
@@ -59,25 +52,11 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Async
-    public void sendEmailFromTemplateSync(String to, String subject, String templateName) {
+    public void sendEmailFromTemplateSync(String to, String subject, String templateName, String username, Object value) {
         Context context = new Context();
-        List<Job> arrJob = this.jobRepository.findAll();
-        String name = "Vu";
-        context.setVariable("name", name);
-        context.setVariable("jobs", arrJob);
+        context.setVariable("name", username);
+        context.setVariable("jobs", value);
 
-        // Nếu dùng @Async quá trình convert file html sang String lỗi ở đây do cơ chế của Java!
-        // main thread khi dùng @Async sẽ xử lý song song đa luồng việc chia sẻ data giữa các Threads gặp khó khăn
-        // => (context.setVariable("jobs", value);)
-
-        // khiến file template không có data chia
-        // How to fix?
-        /*
-         * Khi dùng template engine, ta hãy đưa cho nó data, và nó chỉ chịu trách nhiệm convert HTML -> String
-         * Không ép nó lấy data: 'listJobs fix thành arr ở EmailService'
-         * Ở biến Job ta phải lấy full data chứ không phải mất thời gian query xuống => FIX
-         * Tạo ResEmailJob
-         */
         String content = this.templateEngine.process(templateName, context);
         this.sendEmailSync(to, subject, content, false, true);
     }

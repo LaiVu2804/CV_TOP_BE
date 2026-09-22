@@ -16,9 +16,13 @@ public interface SubscriberService {
 
     Subscriber update(Subscriber subsDB, Subscriber subsRequest);
 
-//    ResEmailJob convertJobToSendEmail(Job job);
-//
-//    void sendSubscribersEmailJobs();
+    ResEmailJob convertJobToSendEmail(Job job);
+
+    void sendSubscribersEmailJobs();
 
     Subscriber findByEmail(String email);
+
+    void sendSubscribersEmailJobByEmail(String email);
+
+    void sendEmailToSingleSubscriber(Subscriber sub);
 }
