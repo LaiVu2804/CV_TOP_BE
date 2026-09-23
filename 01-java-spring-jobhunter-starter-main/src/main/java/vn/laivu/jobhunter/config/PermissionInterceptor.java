@@ -8,12 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
-import vn.laivu.jobhunter.service.UserService;
+import vn.laivu.jobhunter.service.ServiceImpl.UserServiceImpl;
 import vn.laivu.jobhunter.unity.Permission;
 import vn.laivu.jobhunter.unity.Role;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.util.SecurityUtil;
-import vn.laivu.jobhunter.util.error.IdInvalidException;
 import vn.laivu.jobhunter.util.error.PermissionException;
 
 import java.util.List;
@@ -23,7 +22,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(PermissionInterceptor.class);
 
     @Autowired
-    UserService userService;
+    UserServiceImpl userService;
 
     @Override
     @Transactional

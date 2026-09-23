@@ -120,12 +120,17 @@ public class ResumeServiceImpl implements ResumeService {
         res.setUpdatedAt(resume.getUpdatedAt());
         res.setUpdatedBy(resume.getUpdatedBy());
 
-        if (resume.getJob().getCompany() != null) {
-            res.setCompanyName(resume.getJob().getCompany().getName());
+        if (resume.getUser() != null) {
+            res.setUser(new ResFetchResumeDTO.UserResume(resume.getUser().getId(), resume.getUser().getName()));
         }
 
-        res.setUser(new ResFetchResumeDTO.UserResume(resume.getUser().getId(), resume.getUser().getName()));
-        res.setJob(new ResFetchResumeDTO.JobResume(resume.getJob().getId(), resume.getJob().getName()));
+        if (resume.getJob() != null) {
+            res.setJob(new ResFetchResumeDTO.JobResume(resume.getJob().getId(), resume.getJob().getName()));
+            if (resume.getJob().getCompany() != null) {
+                res.setCompanyName(resume.getJob().getCompany().getName());
+            }
+        }
+
         return res;
     }
 
@@ -133,15 +138,17 @@ public class ResumeServiceImpl implements ResumeService {
         Page<Resume> page = this.resumeRepository.findAll(specification, pageable);
         ResultPaginationDTO resultPaginationDTO = new ResultPaginationDTO();
         ResultPaginationDTO.Meta mt = new ResultPaginationDTO.Meta();
+
         // Get from frontend send request
         mt.setPage(pageable.getPageNumber() + 1);
         mt.setPageSize(pageable.getPageSize());
+
         // Get from dbs
         mt.setPages(page.getTotalPages());
         mt.setTotal(page.getTotalElements());
         resultPaginationDTO.setMeta(mt);
 
-        // remove senstive data
+        // remove sensitive data
         List<ResFetchResumeDTO> listResume = page.getContent()
                 .stream().map(item -> this.getResume(item))
                 .collect(Collectors.toList());

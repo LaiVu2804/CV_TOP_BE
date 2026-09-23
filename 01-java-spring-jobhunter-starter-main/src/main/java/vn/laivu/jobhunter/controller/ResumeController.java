@@ -2,12 +2,9 @@ package vn.laivu.jobhunter.controller;
 
 import com.turkraft.springfilter.boot.Filter;
 import com.turkraft.springfilter.builder.FilterBuilder;
-import com.turkraft.springfilter.converter.FilterSpecification;
 import com.turkraft.springfilter.converter.FilterSpecificationConverter;
-import com.turkraft.springfilter.parser.node.FilterNode;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -17,10 +14,8 @@ import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 import vn.laivu.jobhunter.domain.response.resume.ResCreateResumeDTO;
 import vn.laivu.jobhunter.domain.response.resume.ResFetchResumeDTO;
 import vn.laivu.jobhunter.domain.response.resume.ResUpdateResumeDTO;
-import vn.laivu.jobhunter.repository.ResumeRepository;
-import vn.laivu.jobhunter.service.JobService;
 import vn.laivu.jobhunter.service.ResumeService;
-import vn.laivu.jobhunter.service.UserService;
+import vn.laivu.jobhunter.service.ServiceImpl.UserServiceImpl;
 import vn.laivu.jobhunter.unity.Company;
 import vn.laivu.jobhunter.unity.Job;
 import vn.laivu.jobhunter.unity.Resume;
@@ -44,10 +39,10 @@ public class ResumeController {
     FilterSpecificationConverter filterSpecificationConverter;
 
     private final ResumeService resumeService;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     public ResumeController(ResumeService resumeService,
-                            UserService userService) {
+                            UserServiceImpl userService) {
         this.resumeService = resumeService;
         this.userService = userService;
     }
@@ -124,6 +119,9 @@ public class ResumeController {
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : null;
         User currentUser = this.userService.handleGetUserByUserName(email);
+
+        Specification<Resume> finalSpec = specification;
+
         if (currentUser != null) {
             Company userCompany = currentUser.getCompany();
             if (userCompany != null) {
@@ -134,17 +132,21 @@ public class ResumeController {
                             .map(companyJob -> companyJob.getId())
                             .collect(Collectors.toList());
                 }
+
+                if (arrJobIds != null && !arrJobIds.isEmpty()) {
+                    Specification<Resume> jobInSpec = filterSpecificationConverter.convert(
+                            filterBuilder.field("job").in(filterBuilder.input(arrJobIds)).get());
+                    finalSpec = jobInSpec.and(specification);
+                } else {
+                    finalSpec = (root, query, cb) -> cb.disjunction();
+                }
             }
         }
-
-        Specification<Resume> jobInSpec = filterSpecificationConverter.convert(
-                filterBuilder.field("job").in(filterBuilder.input(arrJobIds)).get());
-        Specification<Resume> finalSpec = jobInSpec.and(specification);
 
         return ResponseEntity.ok().body(this.resumeService.fetchAllResume(finalSpec, pageable));
     }
 
-    @PostMapping("/resumes/by-user")
+    @GetMapping("/resumes/by-user")
     @ApiMessage("Get list resumes by user")
     public ResponseEntity<ResultPaginationDTO> fetchResumeByUser(Pageable pageable) {
         return ResponseEntity.ok().body(this.resumeService.fetchResumeByUser(pageable));

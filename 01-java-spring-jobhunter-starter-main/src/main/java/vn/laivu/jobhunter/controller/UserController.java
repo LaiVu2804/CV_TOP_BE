@@ -8,12 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import vn.laivu.jobhunter.unity.Company;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.domain.response.user.ResUpdateDTO;
 import vn.laivu.jobhunter.domain.response.user.RestCreateUserDTO;
 import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
-import vn.laivu.jobhunter.service.UserService;
+import vn.laivu.jobhunter.service.ServiceImpl.UserServiceImpl;
 import vn.laivu.jobhunter.util.Annotation.ApiMessage;
 import vn.laivu.jobhunter.util.error.IdInvalidException;
 
@@ -21,10 +20,10 @@ import vn.laivu.jobhunter.util.error.IdInvalidException;
 @RequestMapping("/api/${api.version}")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserController(UserServiceImpl userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }

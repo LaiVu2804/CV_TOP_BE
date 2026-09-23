@@ -26,6 +26,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation ("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")

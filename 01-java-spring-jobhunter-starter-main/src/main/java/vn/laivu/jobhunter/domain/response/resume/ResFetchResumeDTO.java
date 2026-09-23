@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import vn.laivu.jobhunter.unity.constant.ResumeStateEnum;
-import vn.laivu.jobhunter.unity.constant.State;
 
 import java.time.Instant;
 

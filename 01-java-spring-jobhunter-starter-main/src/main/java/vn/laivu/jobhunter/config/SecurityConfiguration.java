@@ -97,7 +97,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(HttpMethod.GET, "/api/" + apiVersion + "/jobs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/" + apiVersion + "/skills/**").permitAll()
                                 /* Còn lại bất cứ request nào buộc phải xác thực */
-                                .anyRequest().permitAll())
+                                .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2)
                         -> oauth2.jwt(
                                 Customizer.withDefaults()) //sẽ kích hoạt filter BearerTokenAuthenticationFilter,

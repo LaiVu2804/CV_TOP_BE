@@ -7,15 +7,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import vn.laivu.jobhunter.service.UserService;
+import vn.laivu.jobhunter.service.ServiceImpl.UserServiceImpl;
 
 @Component("userDetailsService")
 public class UserDetailsCustom implements UserDetailsService {
 
-  private final UserService userService;
+  private final UserServiceImpl userService;
 
-  public UserDetailsCustom(UserService userService) {
-    this.userService = userService;
+  public UserDetailsCustom(UserServiceImpl userServiceImpl) {
+    this.userService = userServiceImpl;
   }
 
   @Override

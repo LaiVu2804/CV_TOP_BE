@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import vn.laivu.jobhunter.service.ServiceImpl.UserServiceImpl;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.repository.UserRepository;
 import vn.laivu.jobhunter.util.error.DuplicateResourceException;
@@ -36,7 +37,7 @@ public class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Nested
     @DisplayName("Tạo mới người dùng")

@@ -21,18 +21,24 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
-        Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+                                  Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = servletResponse.getStatus();
 
         RestResponse<Object> restResponse = new RestResponse<>();
         restResponse.setStatusCode(status);
 
-      if (body instanceof String) {
-        return body;
-      }
+        if (body instanceof String) {
+            return body;
+        }
 
-        if(status >= 400) {
+        String path = request.getURI().getPath();
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            return body;
+        }
+
+
+        if (status >= 400) {
             return body;
         } else {
             restResponse.setData(body);

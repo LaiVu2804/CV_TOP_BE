@@ -3,7 +3,6 @@ package vn.laivu.jobhunter.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.laivu.jobhunter.service.EmailService;
 import vn.laivu.jobhunter.service.SubscriberService;
 import vn.laivu.jobhunter.unity.Subscriber;
 import vn.laivu.jobhunter.util.Annotation.ApiMessage;

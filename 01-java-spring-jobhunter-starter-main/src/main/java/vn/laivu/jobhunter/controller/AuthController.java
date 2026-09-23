@@ -18,12 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.laivu.jobhunter.domain.response.user.ResUpdateDTO;
-import vn.laivu.jobhunter.domain.response.user.RestCreateUserDTO;
 import vn.laivu.jobhunter.unity.User;
 import vn.laivu.jobhunter.domain.request.ReqLoginDTO;
 import vn.laivu.jobhunter.domain.response.user.RestLoginDTO;
-import vn.laivu.jobhunter.service.UserService;
+import vn.laivu.jobhunter.service.ServiceImpl.UserServiceImpl;
 import vn.laivu.jobhunter.util.Annotation.ApiMessage;
 import vn.laivu.jobhunter.util.SecurityUtil;
 import vn.laivu.jobhunter.util.error.IdInvalidException;
@@ -37,13 +35,13 @@ public class AuthController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final PasswordEncoder passwordEncoder;
 
     public AuthController(
             AuthenticationManagerBuilder authenticationManagerBuilder,
             SecurityUtil securityUtil,
-            UserService userService,
+            UserServiceImpl userService,
             PasswordEncoder passwordEncoder
     ) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
