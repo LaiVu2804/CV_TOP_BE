@@ -1,0 +1,64 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: jobhunter
+
+  profiles:
+    # Mặc định kích hoạt profile 'dev' khi chạy local nếu không truyền SPRING_PROFILES_ACTIVE
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # Cấu hình tải file (Multipart upload)
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  # Cấu hình phân trang REST (Page bắt đầu từ 1)
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+
+  # Cấu hình Template Engine (Thymeleaf - Dùng cho template email)
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+  # Cấu hình gửi mail (SMTP)
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:vu1legend@gmail.com}
+    password: ${MAIL_PASSWORD:gosetbdihdmsopcu}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# Custom Application Properties
+api:
+  version: v1
+
+laivu:
+  jwt:
+    # Khóa bí mật ký JWT (Bắt buộc override qua biến môi trường JWT_SECRET trong production)
+    base64-secret: ${JWT_SECRET:IcfilUPQ5swwFE+ZnRFtE9TjT40Exi4Fsy2IcH2AjbKv/i/M0M7kerio0qyFc0m2eMHzULrnf72ZpfD0XljR9Q==}
+    # Access Token: mặc định 1 ngày cho dev (86400s), thực tế prod nên để 1800s - 3600s
+    access-token-validity-in-seconds: ${JWT_ACCESS_TOKEN_VALIDITY:86400}
+    # Refresh Token: mặc định 10 ngày (864000s)
+    refresh-token-validity-in-seconds: ${JWT_REFRESH_TOKEN_VALIDITY:864000}
+
+  upload-file:
+    # Đường dẫn lưu trữ file tải lên
+    base-uri: ${UPLOAD_BASE_URI:file:///D:/upload/}

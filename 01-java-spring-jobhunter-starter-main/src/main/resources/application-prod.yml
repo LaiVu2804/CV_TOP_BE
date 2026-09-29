@@ -1,0 +1,44 @@
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+
+spring:
+  # Cấu hình Database cho môi trường Production (Bắt buộc inject qua ENV)
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # Tối ưu Connection Pool với HikariCP cho tải cao
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:20}
+      minimum-idle: ${DB_POOL_MIN_IDLE:5}
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  # JPA & Hibernate Prod: Tuyệt đối không dùng ddl-auto=update để tránh lock bảng hoặc mất dữ liệu
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # Bật cache Thymeleaf để tối ưu tốc độ render email template
+  thymeleaf:
+    cache: true
+
+# Access token ngắn hơn cho production (mặc định 1 giờ = 3600s nếu không cấu hình)
+laivu:
+  jwt:
+    access-token-validity-in-seconds: ${JWT_ACCESS_TOKEN_VALIDITY:3600}
+    refresh-token-validity-in-seconds: ${JWT_REFRESH_TOKEN_VALIDITY:604800}
+
+# Logging ở mức an toàn, tránh log credentials hoặc dữ liệu nhạy cảm
+logging:
+  level:
+    root: INFO
+    org.springframework.security: WARN
+    vn.laivu.jobhunter: INFO

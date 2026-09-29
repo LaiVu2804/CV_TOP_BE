@@ -1,0 +1,26 @@
+spring:
+  # Cấu hình Database cho môi trường Dev (Local MySQL)
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/jobhunter?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # JPA & Hibernate Dev: Tự động cập nhật bảng, in câu lệnh SQL có format đẹp
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Tắt cache Thymeleaf để hot-reload template email khi sửa đổi
+  thymeleaf:
+    cache: false
+
+# Logging chi tiết phục vụ debug cho dev
+logging:
+  level:
+    org.springframework.security: DEBUG
+    vn.laivu.jobhunter: DEBUG
