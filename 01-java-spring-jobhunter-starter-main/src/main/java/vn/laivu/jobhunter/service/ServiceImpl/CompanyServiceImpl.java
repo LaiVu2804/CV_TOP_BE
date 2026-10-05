@@ -63,14 +63,17 @@ public class CompanyServiceImpl implements CompanyService {
         return null;
     }
 
-    public Company updateCom(Long id, Company updateCom) {
-        return companyRepository.findById(id).map(com -> {
-            com.setDescription(updateCom.getDescription());
-            com.setAddress(updateCom.getAddress());
-            com.setName(updateCom.getName());
-            com.setLogo(updateCom.getLogo());
-            return companyRepository.save(com);
-        }).orElseThrow(() -> new IllegalArgumentException("không tìm thấy id: " + id));
+    public Company handleUpdateCompany(Company company) {
+        Optional<Company> companyOptional = this.companyRepository.findById(company.getId());
+        if (companyOptional.isPresent()) {
+            Company currentCompany = companyOptional.get();
+            currentCompany.setName(company.getName());
+            currentCompany.setDescription(company.getDescription());
+            currentCompany.setAddress(company.getAddress());
+            currentCompany.setLogo(company.getLogo());
+            return this.companyRepository.save(currentCompany);
+        }
+        return null;
     }
 
     public void deleteCom(Long id) {

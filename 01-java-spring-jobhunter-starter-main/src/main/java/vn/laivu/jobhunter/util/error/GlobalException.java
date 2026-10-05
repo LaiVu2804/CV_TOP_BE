@@ -54,6 +54,7 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<RestResponse<Object>> methodArgumentNotValidException(
             MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();

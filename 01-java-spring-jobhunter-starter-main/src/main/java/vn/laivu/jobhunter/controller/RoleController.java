@@ -33,7 +33,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.roleService.create(role));
     }
 
-    @PutMapping("/roles/{id}")
+    @PutMapping("/roles")
     @ApiMessage("Update a role")
     public ResponseEntity<Role> update(@Valid @RequestBody Role role) throws IdInvalidException {
         // check ID exist?

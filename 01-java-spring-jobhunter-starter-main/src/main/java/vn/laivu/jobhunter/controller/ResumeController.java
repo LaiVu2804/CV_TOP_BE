@@ -55,11 +55,11 @@ public class ResumeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.resumeService.createResume(resume));
     }
 
-    @PutMapping({"/resumes/{id}", "/resumes"})
+    @PutMapping("/resumes")
     @ApiMessage("Update a resume")
     public ResponseEntity<ResUpdateResumeDTO> update(
             @PathVariable(value = "id", required = false) Long id,
-            @Valid @RequestBody Resume resume) throws IdInvalidException {
+            @RequestBody Resume resume) throws IdInvalidException {
 
         if (id != null) {
             resume.setId(id);

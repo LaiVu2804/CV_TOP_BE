@@ -33,7 +33,7 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.permissionService.create(p));
     }
 
-    @PutMapping("/permissions/{id}")
+    @PutMapping("/permissions")
     @ApiMessage("Update a permission")
     public ResponseEntity<Permission> update(@Valid @RequestBody Permission p) throws IdInvalidException {
         // check ID exist?

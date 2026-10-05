@@ -48,14 +48,15 @@ public class CompanyController {
         return ResponseEntity.ok().body(company);
     }
 
-    @PutMapping("/companies/{id}")
-    public ResponseEntity<ApiResponse<Company>> updateProduct(@PathVariable Long id, @RequestBody Company com) {
-
-        Company updated = companyService.updateCom(id, com);
-
-        var result = new ApiResponse<>(HttpStatus.OK, "Cập nhật thành công ", updated, null);
-
-        return ResponseEntity.ok(result);
+    @PutMapping("/companies")
+    @ApiMessage("Updated a company")
+    public ResponseEntity<Company> updateCompany(@Valid @RequestBody Company reqCompany) throws IdInvalidException {
+        Company company = this.companyService.handleGetCompanyById(reqCompany.getId());
+        if(company == null) {
+            throw new IdInvalidException("Company not found");
+        }
+        Company updatedCompany = this.companyService.handleUpdateCompany(reqCompany);
+        return ResponseEntity.ok(updatedCompany);
     }
 
     @DeleteMapping("/companies/{id}")

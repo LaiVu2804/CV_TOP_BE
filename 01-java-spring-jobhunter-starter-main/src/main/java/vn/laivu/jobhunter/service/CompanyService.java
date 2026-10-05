@@ -15,7 +15,7 @@ public interface CompanyService {
 
     Company createCom(Company company);
 
-    Company updateCom(Long id, Company updateCom);
+    Company handleUpdateCompany( Company company);
 
     void deleteCom(Long id);
 

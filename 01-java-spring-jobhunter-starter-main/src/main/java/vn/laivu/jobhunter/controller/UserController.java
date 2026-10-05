@@ -65,7 +65,7 @@ public class UserController {
                 .body(this.userService.convertToRestDTO(fetcheUser));
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/users")
     @ApiMessage("Update user success !")
     public ResponseEntity<ResUpdateDTO> updateUser(@Valid @RequestBody ResUpdateDTO user) throws IdInvalidException {
         ResUpdateDTO curUser = this.userService.handleUpdateUser(user);

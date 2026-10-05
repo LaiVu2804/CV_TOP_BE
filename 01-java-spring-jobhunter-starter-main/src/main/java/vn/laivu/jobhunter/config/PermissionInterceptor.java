@@ -55,16 +55,18 @@ public class PermissionInterceptor implements HandlerInterceptor {
                     logger.debug("User has role: {}", role.getName());
                     List<Permission> permissions = role.getPermissions(); // error if haven't session => fix: @Transactional create session
 
-                    boolean isAllow = permissions
-                            .stream()
-                            .anyMatch(
+                    boolean isAllow = path != null && permissions.stream().anyMatch(
                                     item -> item.getApiPath().equals(path) && item.getMethod().equals(httpMethod));
 
                     if (isAllow) {
                         logger.debug("Permission granted for {} {} to user {}", httpMethod, path, email);
                     } else {
-                        logger.warn("Permission denied for {} {} to user {} with role {}", httpMethod, path, email, role.getName());
-                        throw new PermissionException("Bạn ko co quyền truy cập endpoint này!");
+                        if (path == null) {
+                            logger.warn("Endpoint not found for {} to user {}", requestURI, email);
+                        } else {
+                            logger.warn("Permission denied for {} {} to user {} with role {}", httpMethod, path, email, role.getName());
+                        }
+                        throw new PermissionException("Bạn ko co quyền truy cập endpoint này !");
                     }
                 } else {
                     logger.warn("User {} has no role assigned", email);
