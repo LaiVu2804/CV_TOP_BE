@@ -1,0 +1,26 @@
+package vn.laivu.jobhunter.domain.response.job;
+
+import lombok.Getter;
+import lombok.Setter;
+import vn.laivu.jobhunter.unity.constant.Level;
+
+import java.util.Date;
+import java.util.List;
+
+@Setter
+@Getter
+public class ResUpdateJobDTO {
+    private Long id;
+    private String name;
+    private String location;
+    private double salary;
+    private int quantity;
+    private Level level;
+    private String description;
+    private Date startDate;
+    private Date endDate;
+    private String Experience;
+    private List<TotalResponse.JobSkillsDTO> skills;
+    private TotalResponse.JobCompanyDTO company;
+    private boolean isActive;
+}

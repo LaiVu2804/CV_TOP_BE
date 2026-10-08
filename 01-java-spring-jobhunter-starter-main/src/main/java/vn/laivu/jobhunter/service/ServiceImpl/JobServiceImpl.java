@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 import vn.laivu.jobhunter.domain.response.job.ResCreateJobDTO;
 import vn.laivu.jobhunter.domain.response.job.ResFetchJobDTO;
+import vn.laivu.jobhunter.domain.response.job.ResUpdateJobDTO;
 import vn.laivu.jobhunter.domain.response.job.TotalResponse;
 import vn.laivu.jobhunter.repository.CompanyRepository;
 import vn.laivu.jobhunter.repository.JobRepository;
@@ -36,6 +37,14 @@ public class JobServiceImpl implements JobService {
         this.companyRepository = companyRepository;
         this.skillRepository = skillRepository;
         this.jobRepository = jobRepository;
+    }
+
+    public Job handleGetJobById(long id) {
+        Optional<Job> optional = this.jobRepository.findById(id);
+        if (optional.isPresent()) {
+            return optional.get();
+        }
+        return null;
     }
 
     public ResultPaginationDTO fetchAllJob(Specification<Job> spec, Pageable pageable, Job job) {
@@ -79,7 +88,7 @@ public class JobServiceImpl implements JobService {
                     item.getSalary(),
                     item.getStartDate(),
                     item.getEndDate(),
-                    item.getIsActive(),
+                    item.getActive(),
                     skillDtoList,
                     companyDto
             );
@@ -132,7 +141,7 @@ public class JobServiceImpl implements JobService {
         dto.setDescription(currentJob.getDescription());
         dto.setStartDate(currentJob.getStartDate());
         dto.setEndDate(currentJob.getEndDate());
-        dto.setActive(currentJob.getIsActive());
+        dto.setActive(currentJob.getActive());
 
         // Set skills for current job
         if (job.getSkills() != null) {
@@ -182,14 +191,18 @@ public class JobServiceImpl implements JobService {
                             job.getSalary(),
                             job.getStartDate(),
                             job.getEndDate(),
-                            job.getIsActive(),
+                            job.getActive(),
                             skillDTOs,
                             companyDTO
                     );
                 }).orElseThrow(() -> new RuntimeException("Job với id = " + id + " không tồn tại"));
     }
 
-    public ResCreateJobDTO handleUpdateJob(Job job) throws IdInvalidException {
+    public void handleDeleteJob(long id) {
+        this.jobRepository.deleteById(id);
+    }
+
+    public ResUpdateJobDTO handleUpdateJob(Job job) throws IdInvalidException {
         if (job.getId() <= 0) {
             throw new IdInvalidException("Job không tìm thấy");
         }
@@ -237,7 +250,7 @@ public class JobServiceImpl implements JobService {
         currentJob.setDescription(job.getDescription());
         currentJob.setStartDate(job.getStartDate());
         currentJob.setEndDate(job.getEndDate());
-        currentJob.setIsActive(job.getIsActive());
+        currentJob.setActive(job.getActive());
 
         currentJob.setUpdatedAt(Instant.now());
         currentJob.setUpdatedBy(SecurityUtil.getCurrentUserLogin().isPresent() == true
@@ -248,7 +261,7 @@ public class JobServiceImpl implements JobService {
         currentJob = this.jobRepository.save(currentJob);
 
         // convert response
-        ResCreateJobDTO dto = new ResCreateJobDTO();
+        ResUpdateJobDTO dto = new ResUpdateJobDTO();
 
         dto.setId(currentJob.getId());
         dto.setName(currentJob.getName());
@@ -260,7 +273,7 @@ public class JobServiceImpl implements JobService {
 
         dto.setStartDate(currentJob.getStartDate());
         dto.setEndDate(currentJob.getEndDate());
-        dto.setActive(currentJob.getIsActive());
+        dto.setActive(currentJob.getActive());
 
         if (currentJob.getSkills() != null) {
             List<TotalResponse.JobSkillsDTO> skills = currentJob.getSkills().stream().map(item ->

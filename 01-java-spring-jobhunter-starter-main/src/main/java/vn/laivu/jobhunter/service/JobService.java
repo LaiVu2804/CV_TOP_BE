@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 import vn.laivu.jobhunter.domain.response.job.ResCreateJobDTO;
 import vn.laivu.jobhunter.domain.response.job.ResFetchJobDTO;
+import vn.laivu.jobhunter.domain.response.job.ResUpdateJobDTO;
 import vn.laivu.jobhunter.unity.Job;
 
 import vn.laivu.jobhunter.util.error.IdInvalidException;
@@ -16,9 +17,11 @@ public interface JobService {
 
     ResCreateJobDTO handleCreateJob(Job job) throws IdInvalidException;
 
-    ResCreateJobDTO handleUpdateJob(Job job) throws IdInvalidException;
-
-//    Job handleGetJobById (long id);
+    ResUpdateJobDTO handleUpdateJob(Job job) throws IdInvalidException;
 
     ResFetchJobDTO getJobById (long id);
+
+    Job handleGetJobById(long id);
+
+    void handleDeleteJob(long id);
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.laivu.jobhunter.domain.response.ResultPaginationDTO;
 import vn.laivu.jobhunter.domain.response.job.ResCreateJobDTO;
 import vn.laivu.jobhunter.domain.response.job.ResFetchJobDTO;
+import vn.laivu.jobhunter.domain.response.job.ResUpdateJobDTO;
 import vn.laivu.jobhunter.service.JobService;
 import vn.laivu.jobhunter.unity.Job;
 import vn.laivu.jobhunter.util.Annotation.ApiMessage;
@@ -38,19 +39,14 @@ public class JobController {
         return ResponseEntity.status(HttpStatus.OK).body(this.jobService.fetchAllJob(spec, pageable, job));
     }
 
-    @PutMapping({"/jobs/{id}", "/jobs"})
+    @PutMapping("/jobs")
     @ApiMessage("Updated a job")
-    public ResponseEntity<ResCreateJobDTO> updateJob(
-            @PathVariable(value = "id", required = false) Long id,
-            @Valid @RequestBody Job reqJob) throws IdInvalidException {
-        if (id != null) {
-            reqJob.setId(id);
+    public ResponseEntity<ResUpdateJobDTO> updateAJob(@Valid@RequestBody Job reqJob) throws IdInvalidException {
+        Job currentJob = this.jobService.handleGetJobById(reqJob.getId());
+        if(currentJob == null) {
+            throw new IdInvalidException("Job not found");
         }
-        ResCreateJobDTO currentJob = this.jobService.handleUpdateJob(reqJob);
-        if (currentJob == null) {
-            throw new IdInvalidException("Job không tìm thấy");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(currentJob);
+        return ResponseEntity.status(HttpStatus.OK).body(this.jobService.handleUpdateJob(reqJob));
     }
 
     @GetMapping("/jobs/{id}")
@@ -61,5 +57,16 @@ public class JobController {
             throw new IdInvalidException("Job not found");
         }
         return ResponseEntity.ok().body(currentJob);
+    }
+
+    @DeleteMapping("/jobs/{id}")
+    @ApiMessage("Deleted a job")
+    public ResponseEntity<Void> deleteAJob(@PathVariable("id") long id) throws IdInvalidException {
+        Job currentJob = this.jobService.handleGetJobById(id);
+        if(currentJob == null) {
+            throw new IdInvalidException("Job not found");
+        }
+        this.jobService.handleDeleteJob(id);
+        return ResponseEntity.ok().body(null);
     }
 }
