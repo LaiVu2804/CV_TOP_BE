@@ -71,8 +71,7 @@ public class SecurityUtil {
 
     //Tạo ra phần hearder
     JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
-    return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims))
-        .getTokenValue();
+    return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
   }
 
 

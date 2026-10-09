@@ -163,7 +163,7 @@ public class ResumeServiceImpl implements ResumeService {
         String email = SecurityUtil.getCurrentUserLogin().isPresent() == true
                 ? SecurityUtil.getCurrentUserLogin().get()
                 : null;
-        FilterNode node = filterParser.parse("email='"+email+"'");
+        FilterNode node = filterParser.parse("email='" + email + "'");
         FilterSpecification<Resume> specification = filterSpecificationConverter.convert(node);
         Page<Resume> page = this.resumeRepository.findAll(specification, pageable);
 

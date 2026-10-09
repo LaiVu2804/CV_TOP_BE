@@ -48,9 +48,6 @@ public class SecurityConfiguration {
     @Value("${laivu.jwt.base64-secret}")
     private String jwtKey;
 
-    @Value("${laivu.jwt.refresh-token-validity-in-seconds}")
-    private long refreshTokenExpiration;
-
     @Bean //JwtDecoder : giải mã bear token (check tính hợp lệ của bear token)
     //phải ghi đè phần decoder này
     public JwtDecoder jwtDecoder() {
